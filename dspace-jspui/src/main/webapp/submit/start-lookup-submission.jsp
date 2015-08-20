@@ -396,31 +396,32 @@
     	var j = jQuery.noConflict();
     	
     	j(document).ready(function(){
-	j("#select-collection-manual").select2({
-		placeholder: "Select a state",
-		allowClear: true
-	});
+		j("#select-collection-manual").select2({
+			placeholder: "Select a state",
+			allowClear: true
+		});
 	 
-	j("#select-collection-manual").select2({
-	  placeholder: "選擇類別"
-	});
-	j("#select-collection").select2({
-		placeholder: "Select a state",
-		allowClear: true
-	});
+		j("#select-collection-manual").select2({
+		  placeholder: "選擇類別"
+		});
+		j("#select-collection").select2({
+			placeholder: "Select a state",
+			allowClear: true
+		});
 	   
-	j("#select-collection").select2({
-		placeholder: "選擇類別"
-	});
-	j("#select-collection-file").select2({
-		placeholder: "Select a state",
-		allowClear: true
-	});
+		j("#select-collection").select2({
+			placeholder: "選擇類別"
+		});
+		j("#select-collection-file").select2({
+			placeholder: "Select a state",
+			allowClear: true
+		});
 	  
-	j("#select-collection-file").select2({
-		placeholder: "選擇類別..."
+		j("#select-collection-file").select2({
+			placeholder: "選擇類別..."
+		});
+		j('.select2.select2-container.select2-container--default').width(450);
 	});
-	j('.select2.select2-container.select2-container--default').width(450);
     	
     	j("#tabs").tabs({
     		beforeActivate: function( event, ui ) {
