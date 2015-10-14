@@ -58,43 +58,43 @@
             <tr>
               <td>2013</td>
               <td>
-                  <a href="/handle/11455/63368">1.電子全文下載著作權責任聲明</a>
+                  <a href="/handle/11455/87132">電子全文下載著作權責任聲明</a>
               </td>
               <td>
                   <a href="/browse?type=author&amp;value=%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1&amp;value_lang=zh_TW">系統管理員</a>
               </td>
               <td>
-                  <a class="glyphicon glyphicon-file" target="_blank" href="/bitstream/11455/63368/1/%e9%9b%bb%e5%ad%90%e5%85%a8%e6%96%87%e4%b8%8b%e8%bc%89%e8%91%97%e4%bd%9c%e6%ac%8a%e8%b2%ac%e4%bb%bb%e8%81%b2%e6%98%8e.pdf"></a>
+                  <a class="glyphicon glyphicon-file" target="_blank" href="/bitstream/11455/87132/1/電子全文下載著作權責任聲明.pdf"></a>
               </td>
             </tr>
             <tr>
               <td>2013</td>
               <td>
-                  <a href="/handle/11455/63369">2.國立中興大學機構典藏系統（NCHUIR）著作權聲明.pdf</a>
+                  <a href="/handle/11455/87133">國立中興大學機構典藏系統（NCHUIR）著作權聲明</a>
               </td>
               <td>
                   <a href="/browse?type=author&amp;value=%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1&amp;value_lang=zh_TW">系統管理員</a>
               </td>
               <td>
-                  <a class="glyphicon glyphicon-file" target="_blank" href="/bitstream/11455/63369/1/%e5%9c%8b%e7%ab%8b%e4%b8%ad%e8%88%88%e5%a4%a7%e5%ad%b8%e6%a9%9f%e6%a7%8b%e5%85%b8%e8%97%8f%e7%b3%bb%e7%b5%b1%ef%bc%88NCHUIR%ef%bc%89%e8%91%97%e4%bd%9c%e6%ac%8a%e8%81%b2%e6%98%8e.pdf"></a>
+                  <a class="glyphicon glyphicon-file" target="_blank" href="/bitstream/11455/87133/1/國立中興大學機構典藏系統（NCHUIR）著作權聲明.pdf"></a>
               </td>
             </tr>
             <tr>
               <td>2013</td>
               <td>
-                  <a href="/handle/11455/63370">3.國立中興大學圖書館對於NCHUIR著作權責任聲明</a>
+                  <a href="/handle/11455/87134">國立中興大學圖書館對於NCHUIR著作權責任聲明</a>
               </td>
               <td>
                   <a href="/browse?type=author&amp;value=%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1&amp;value_lang=zh_TW">系統管理員</a>
               </td>
               <td>
-                  <a class="glyphicon glyphicon-file" target="_blank" href="/bitstream/11455/63370/1/%e5%9c%8b%e7%ab%8b%e4%b8%ad%e8%88%88%e5%a4%a7%e5%ad%b8%e5%9c%96%e6%9b%b8%e9%a4%a8%e5%b0%8d%e6%96%bcNCHUIR%e8%91%97%e4%bd%9c%e6%ac%8a%e8%b2%ac%e4%bb%bb%e8%81%b2%e6%98%8e.pdf"></a>
+                  <a class="glyphicon glyphicon-file" target="_blank" href="/bitstream/11455/87134/1/國立中興大學圖書館對於NCHUIR著作權責任聲明.pdf"></a>
               </td>
             </tr>
             <tr>
               <td>2008</td>
               <td>
-                  <a href="/handle/11455/63371">4.機構典藏西文出版社授權表(清大版本)</a>
+                  <a href="/handle/11455/87135">機構典藏西文出版社授權表(清大版本)</a>
               </td>
               <td>
                   <a href="/browse?type=author&amp;value=%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1&amp;value_lang=zh_TW">系統管理員</a>
@@ -106,7 +106,7 @@
             <tr>
               <td>2009-06</td>
               <td>
-                  <a href="/handle/11455/63372">5.機構典藏西文出版社授權表(台大版本)</a>
+                  <a href="/handle/11455/87136">機構典藏西文出版社授權表(台大版本)</a>
               </td>
               <td>
                   <a href="/browse?type=author&amp;value=%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1&amp;value_lang=zh_TW">系統管理員</a>
@@ -118,7 +118,7 @@
             <tr>
               <td>2013</td>
               <td>
-                  <a href="/handle/11455/63373">6.經濟部智慧財產局 智慧財產局專區</a>
+                  <a href="/handle/11455/87137">經濟部智慧財產局 智慧財產局專區</a>
               </td>
               <td>
                   <a href="/browse?type=author&amp;value=%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%93%A1&amp;value_lang=zh_TW">系統管理員</a>

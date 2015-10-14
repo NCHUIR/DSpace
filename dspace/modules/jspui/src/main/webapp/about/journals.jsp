@@ -159,7 +159,7 @@
 		{
 			name:'圖書館館訊',
 			href:'/handle/11455/82357',
-			frontCoverSrc:'',
+			frontCoverSrc:'/image/journals/09.jpg',
 			description:'',
 			category:'行政單位'
 		},
