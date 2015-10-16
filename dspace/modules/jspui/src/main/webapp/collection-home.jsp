@@ -42,6 +42,7 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.LocaleSupport" %>
 <%@ page import="java.net.URLEncoder" %>
 
+<%@ page import="org.dspace.statistics.ItemWithBitstreamVsTotalCounter" %>
 
 <%
     // Retrieve attributes
@@ -50,7 +51,7 @@
     Group      submitters = (Group) request.getAttribute("submitters");
 
     RecentSubmissions rs = (RecentSubmissions) request.getAttribute("recently.submitted");
-    
+
     boolean loggedIn =
         ((Boolean) request.getAttribute("logged.in")).booleanValue();
     boolean subscribed =
@@ -89,14 +90,14 @@
     String communityLink = "/handle/" + community.getHandle();
 
     Bitstream logo = collection.getLogo();
-    
+
     boolean feedEnabled = ConfigurationManager.getBooleanProperty("webui.feed.enable");
     String feedData = "NONE";
     if (feedEnabled)
     {
         feedData = "coll:" + ConfigurationManager.getProperty("webui.feed.formats");
     }
-    
+
     ItemCounter ic = new ItemCounter(UIUtil.obtainContext(request));
 
     Boolean showItems = (Boolean)request.getAttribute("show.items");
@@ -115,7 +116,7 @@
 <%
             }
 %>
-		<small><fmt:message key="jsp.collection-home.heading1"/></small>
+		<small><fmt:message key="jsp.collection-home.heading1"/> | <fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix"/><%= ItemWithBitstreamVsTotalCounter.getCollectionCount(collection).toString() %></small>
       <a class="statisticsLink btn btn-info" href="<%= request.getContextPath() %>/cris/stats/collection.html?handle=<%= collection.getHandle() %>"><fmt:message key="jsp.collection-home.display-statistics"/></a>
       </h2></div>
 <%  if (logo != null) { %>
@@ -130,7 +131,7 @@
 <% 	} %>
   </div>
   <p class="copyrightText"><%= copyright %></p>
-  
+
   <%-- Browse --%>
   <div class="panel panel-primary">
   	<div class="panel-heading">
@@ -148,7 +149,7 @@
 		<%-- <input type="hidden" name="collection" value="<%= collection.getHandle() %>" /> --%>
 		<input type="submit" class="btn btn-default col-md-3 col-sm-3 col-xs-2" name="submit_browse" value="<fmt:message key="<%= key %>"/>"/>
 	</form>
-<%	
+<%
 	}
 %>	</div>
 </div>
@@ -210,15 +211,15 @@
 
         // prepare the next and previous links
         String linkBase = request.getContextPath() + "/handle/" + collection.getHandle();
-        
+
         String next = linkBase;
         String prev = linkBase;
-        
+
         if (bi.hasNextPage())
         {
             next = next + "?offset=" + bi.getNextOffset();
         }
-        
+
         if (bi.hasPrevPage())
         {
             prev = prev + "?offset=" + bi.getPrevOffset();
@@ -242,7 +243,7 @@
 
     <%--  do the top previous and next page links --%>
     <div align="center">
-<% 
+<%
       if (bi.hasPrevPage())
       {
 %>
@@ -288,7 +289,7 @@
 
     <%--  do the bottom previous and next page links --%>
     <div align="center">
-<% 
+<%
       if (bi.hasPrevPage())
       {
 %>
@@ -315,7 +316,7 @@
   <div class="panel-heading"><fmt:message key="jsp.admintools"/>
   	<span class="pull-right"><dspace:popup page="<%= LocaleSupport.getLocalizedMessage(pageContext, \"help.collection-admin\")%>"><fmt:message key="jsp.adminhelp"/></dspace:popup></span>
   </div>
-  <div class="panel-body">              
+  <div class="panel-body">
   <% if( editor_button ) { %>
     <form method="post" action="<%=request.getContextPath()%>/tools/edit-communities">
       <input type="hidden" name="collection_id" value="<%= collection.getID() %>" />
@@ -354,7 +355,7 @@
 </div>
 </div>
 <% } %>
-                 
+
 <% } %>
 
 <%  } %>
@@ -392,4 +393,3 @@
   </dspace:sidebar>
 
 </dspace:layout>
-

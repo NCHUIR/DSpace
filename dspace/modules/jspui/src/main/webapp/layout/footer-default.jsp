@@ -19,38 +19,44 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="org.dspace.app.webui.util.UIUtil" %>
 
+<%@ page import="org.dspace.statistics.ItemWithBitstreamVsTotalCounter" %>
+<%@ page import="org.dspace.app.webui.components.ItemWithBitstreamVsTotalProcessor" %>
+
 <%
     String sidebar = (String) request.getAttribute("dspace.layout.sidebar");
+    ItemWithBitstreamVsTotalCounter siteCount = ItemWithBitstreamVsTotalCounter.getSiteCount();
 %>
-
-            <%-- Right-hand side bar if appropriate --%>
+    <%-- Right-hand side bar if appropriate --%>
 <%
     if (sidebar != null)
     {
 %>
-	</div>
-	<div class="col-md-2">
-                    <%= sidebar %>
     </div>
-    </div>       
+    <div class="col-md-2">
+        <%= sidebar %>
+    </div>
+    </div>
 <%
     }
 %>
 </div>
 </main>
-            <%-- Page footer --%>
-            <dspace:include page="/layout/copyright.jsp" />
-             <footer class="navbar-inverse navbar-bottom">
-             <div id="designedby" class="container text-muted">
-             <fmt:message key="jsp.layout.footer-default.theme-by"/> <a href="http://www.cineca.it"><img
-                                    src="<%= request.getContextPath() %>/image/logo-cineca-small.png"
-                                    alt="Logo CINECA" /></a>
-			<div id="footer_feedback" class="pull-right">                                    
-                                <p class="text-muted"><fmt:message key="jsp.layout.footer-default.text"/>&nbsp;-
-                                <a target="_blank" href="<%= request.getContextPath() %>/feedback"><fmt:message key="jsp.layout.footer-default.feedback"/></a>
-                                <a href="<%= request.getContextPath() %>/htmlmap"></a></p>
-                                </div>
-			</div>
+    <%-- Page footer --%>
+    <dspace:include page="/layout/copyright.jsp" />
+    <footer class="navbar-inverse navbar-bottom">
+    <!-- <%= ItemWithBitstreamVsTotalProcessor.getPrefixForNTUR() %> <%= siteCount.toString() %> -->
+    <div id="designedby" class="container text-muted">
+            <div style="float: left; padding-top: 12px;">
+                <span>
+                    <fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix" /><%= siteCount.toString() %>
+                </span>
+            </div>
+            <div id="footer_feedback" class="pull-right">
+                <p class="text-muted"><fmt:message key="jsp.layout.footer-default.text"/>&nbsp;-
+                    <a target="_blank" href="<%= request.getContextPath() %>/feedback"><fmt:message key="jsp.layout.footer-default.feedback"/></a>
+                <a href="<%= request.getContextPath() %>/htmlmap"></a></p>
+                </div>
+            </div>
     </footer>
     </body>
 </html>
