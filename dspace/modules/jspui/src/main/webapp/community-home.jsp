@@ -35,6 +35,8 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.LocaleSupport" %>
 <%@ page import="java.util.List"%>
 
+<%@ page import="org.dspace.statistics.ItemWithBitstreamVsTotalCounter" %>
+
 <%
     Boolean isAdminB = (Boolean) request.getAttribute("is.admin");
     Boolean isAdmin = (isAdminB != null?isAdminB.booleanValue():false);
@@ -45,7 +47,7 @@
         (Collection[]) request.getAttribute("collections");
     Community[] subcommunities =
         (Community[]) request.getAttribute("subcommunities");
-    
+
     RecentSubmissions rs = (RecentSubmissions) request.getAttribute("recently.submitted");
     List<Integer> commSubscribed = (List<Integer>) request.getAttribute("subscription_communities");
     List<Integer> collSubscribed = (List<Integer>) request.getAttribute("subscription_collections");
@@ -53,7 +55,7 @@
           ((Boolean) request.getAttribute("logged.in")).booleanValue();
     boolean subscribed =
           ((Boolean) request.getAttribute("subscribed")).booleanValue();
-    
+
     Boolean editor_b = (Boolean)request.getAttribute("editor_button");
     boolean editor_button = (editor_b == null ? false : editor_b.booleanValue());
     Boolean add_b = (Boolean)request.getAttribute("add_button");
@@ -70,14 +72,14 @@
     String copyright = community.getMetadata("copyright_text");
     String sidebar = community.getMetadata("side_bar_text");
     Bitstream logo = community.getLogo();
-    
+
     boolean feedEnabled = ConfigurationManager.getBooleanProperty("webui.feed.enable");
     String feedData = "NONE";
     if (feedEnabled)
     {
         feedData = "comm:" + ConfigurationManager.getProperty("webui.feed.formats");
     }
-    
+
     ItemCounter ic = new ItemCounter(UIUtil.obtainContext(request));
 %>
 
@@ -90,19 +92,19 @@
         <%
             if(ConfigurationManager.getBooleanProperty("webui.strengths.show"))
             {
-%>
+        %>
                 : [<%= ic.getCount(community) %>]
-<%
+        <%
             }
-%>
-		<small><fmt:message key="jsp.community-home.heading1"/></small>
+        %>
+		<small><fmt:message key="jsp.community-home.heading1"/> | <fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix"/><%= ItemWithBitstreamVsTotalCounter.getCommunityCount(community).toString() %></small>
         <a class="statisticsLink btn btn-info" href="<%= request.getContextPath() %>/cris/stats/community.html?handle=<%= community.getHandle() %>"><fmt:message key="jsp.community-home.display-statistics"/></a>
 		</h2>
 	</div>
 <%  if (logo != null) { %>
      <div class="col-md-4">
      	<img class="img-responsive" alt="Logo" src="<%= request.getContextPath() %>/retrieve/<%= logo.getID() %>" />
-     </div> 
+     </div>
 <% } %>
  </div>
 
@@ -129,7 +131,7 @@
 	if (rs != null)
 	{ %>
 	<div class="col-md-8">
-        <div class="panel panel-primary">        
+        <div class="panel panel-primary">
         <div id="recent-submissions-carousel" class="panel-heading carousel slide">
         <%-- Recently Submitted items --%>
 			<h3><fmt:message key="jsp.community-home.recentsub"/>
@@ -163,13 +165,13 @@
     }
 %>
 			</h3>
-		
+
 	<%
 		Item[] items = rs.getRecentSubmissions();
 		boolean first = true;
-		if(items!=null && items.length>0) 
-		{ 
-	%>	
+		if(items!=null && items.length>0)
+		{
+	%>
 		<!-- Wrapper for slides -->
 		  <div class="carousel-inner">
 	<%	for (int i = 0; i < items.length; i++)
@@ -185,8 +187,8 @@
 			}
 			%>
 		    <div style="padding-bottom: 50px; min-height: 200px;" class="item <%= first?"active":""%>">
-		      <div style="padding-left: 80px; padding-right: 80px; display: inline-block;"><%= StringUtils.abbreviate(displayTitle, 400) %> 
-		      	<a href="<%= request.getContextPath() %>/handle/<%=items[i].getHandle() %>"> 
+		      <div style="padding-left: 80px; padding-right: 80px; display: inline-block;"><%= StringUtils.abbreviate(displayTitle, 400) %>
+		      	<a href="<%= request.getContextPath() %>/handle/<%=items[i].getHandle() %>">
 		      		<button class="btn btn-success" type="button">See</button>
 		      		</a>
 		      </div>
@@ -196,7 +198,7 @@
 		     }
 		%>
 		</div>
-		
+
 		  <!-- Controls -->
 		  <a class="left carousel-control" href="#recent-submissions-carousel" data-slide="prev">
 		    <span class="icon-prev"></span>
@@ -211,11 +213,11 @@
 		    <li data-target="#recent-submissions-carousel" data-slide-to="<%= i %>"></li>
 		    <% } %>
 	      </ol>
-		
+
 		<%
 		}
 		%>
-		  
+
      </div></div></div>
 <%
 	}
@@ -223,7 +225,7 @@
 	<div class="col-md-4">
     	<%= sidebar %>
 	</div>
-</div>	
+</div>
 
 <%-- Browse --%>
 <div class="panel panel-primary">
@@ -240,10 +242,10 @@
 		<%-- <input type="hidden" name="community" value="<%= community.getHandle() %>" /> --%>
 		<input class="btn btn-default col-md-3 col-sm-3 col-xs-2" type="submit" name="submit_browse" value="<fmt:message key="<%= key %>"/>" title="<fmt:message key="<%= key %>"/>"/>
 	</form>
-<%	
+<%
 	}
 %>
-			
+
 	</div>
 </div>
 
@@ -265,23 +267,23 @@
 	<div class="col-md-6">
 
 		<h3><fmt:message key="jsp.community-home.heading3"/></h3>
-   
+
         <div class="list-group">
 <%
         for (int j = 0; j < subcommunities.length; j++)
         {
 %>
-			<div class="list-group-item">  
-<%  
+			<div class="list-group-item">
+<%
 		Bitstream logoCom = subcommunities[j].getLogo();
 		if (showLogos && logoCom != null) { %>
 			<div class="col-md-3">
-		        <img alt="Logo" class="img-responsive" src="<%= request.getContextPath() %>/retrieve/<%= logoCom.getID() %>" /> 
+		        <img alt="Logo" class="img-responsive" src="<%= request.getContextPath() %>/retrieve/<%= logoCom.getID() %>" />
 			</div>
 			<div class="col-md-9">
 <% } else { %>
 			<div class="col-md-12">
-<% }  %>		
+<% }  %>
 
 	      <h4 class="list-group-item-heading"><a href="<%= request.getContextPath() %>/handle/<%= subcommunities[j].getHandle() %>">
 	                <%= subcommunities[j].getMetadata("name") %></a>
@@ -304,7 +306,7 @@
 			    </h4>
                 <p class="collectionDescription"><%= subcommunities[j].getMetadata("short_description") %></p>
             </div>
-         </div> 
+         </div>
 <%
         }
 %>
@@ -327,17 +329,17 @@
         for (int i = 0; i < collections.length; i++)
         {
 %>
-			<div class="list-group-item">  
-<%  
+			<div class="list-group-item">
+<%
 		Bitstream logoCol = collections[i].getLogo();
 		if (showLogos && logoCol != null) { %>
 			<div class="col-md-3">
-		        <img alt="Logo" class="img-responsive" src="<%= request.getContextPath() %>/retrieve/<%= logoCol.getID() %>" /> 
+		        <img alt="Logo" class="img-responsive" src="<%= request.getContextPath() %>/retrieve/<%= logoCol.getID() %>" />
 			</div>
 			<div class="col-md-9">
 <% } else { %>
 			<div class="col-md-12">
-<% }  %>		
+<% }  %>
 
 	      <h4 class="list-group-item-heading"><a href="<%= request.getContextPath() %>/handle/<%= collections[i].getHandle() %>">
 	      <%= collections[i].getMetadata("name") %></a>
@@ -347,12 +349,12 @@
 %>
                 [<%= ic.getCount(collections[i]) %>]
 <%
-            }
+} %> [<%= ItemWithBitstreamVsTotalCounter.getCollectionCount(collections[i]).toString() %>] <%
 			if(isAdmin || !ConfigurationManager.getBooleanProperty("solr-statistics","authorization.admin")) { %>
 					<a href="<%= request.getContextPath() %>/cris/stats/collection.html?handle=<%= collections[i].getHandle() %>"><img src="<%= request.getContextPath() %>/images/chart_curve.png" border="0" title="usage statistics"/></a>
 				&nbsp;
 		 <% } %>
-        
+
 		<a href="<%= request.getContextPath() %>/feed/rss_2.0/<%= collections[i].getHandle() %>"><img src="<%= request.getContextPath() %>/image/stats/feed.png" border="0" title="Content update: RSS feed"/></a>
 		&nbsp;<a href=<%= request.getContextPath() %>/handle/<%= collections[i].getHandle() %>?handle=<%= collections[i].getHandle() %>&submit_<%
 		    if (collSubscribed!=null && collSubscribed.contains(collections[i].getID()))
@@ -364,7 +366,7 @@
 		        %>subscribe=subscribe"><img src="<%= request.getContextPath() %>/image/stats/start-bell.png" border="0" title="Content update: Email subscription"/></a><%
 		    }
     	%>
-			
+
 	    <% if (remove_button) { %>
 	      <form class="btn-group" method="post" action="<%=request.getContextPath()%>/tools/edit-communities">
 	          <input type="hidden" name="parent_community_id" value="<%= community.getID() %>" />
@@ -377,7 +379,7 @@
 		</h4>
       <p class="collectionDescription"><%= collections[i].getMetadata("short_description") %></p>
     </div>
-  </div>  
+  </div>
 <%
         }
 %>
@@ -412,7 +414,7 @@
           <input type="hidden" name="community_id" value="<%= community.getID() %>" />
           <input class="btn btn-default col-md-12" type="submit" value="<fmt:message key="jsp.community-home.create1.button"/>" title="<fmt:message key="jsp.community-home.create1.button"/>" />
         </form>
-            
+
         <form method="post" action="<%=request.getContextPath()%>/tools/edit-communities">
             <input type="hidden" name="action" value="<%= EditCommunitiesServlet.START_CREATE_COMMUNITY%>" />
             <input type="hidden" name="parent_community_id" value="<%= community.getID() %>" />

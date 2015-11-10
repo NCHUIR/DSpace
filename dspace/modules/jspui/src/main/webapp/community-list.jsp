@@ -13,9 +13,9 @@
   -
   - Attributes to be passed in:
   -    communities         - array of communities
-  -    collections.map  - Map where a keys is a community IDs (Integers) and 
+  -    collections.map  - Map where a keys is a community IDs (Integers) and
   -                      the value is the array of collections in that community
-  -    subcommunities.map  - Map where a keys is a community IDs (Integers) and 
+  -    subcommunities.map  - Map where a keys is a community IDs (Integers) and
   -                      the value is the array of subcommunities in that community
   -    admin_button - Boolean, show admin 'Create Top-Level Community' button
   --%>
@@ -25,7 +25,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-    
+
 <%@ page import="org.dspace.app.webui.servlet.admin.EditCommunitiesServlet" %>
 <%@ page import="org.dspace.app.webui.util.UIUtil" %>
 <%@ page import="org.dspace.browse.ItemCountException" %>
@@ -37,6 +37,8 @@
 <%@ page import="java.io.IOException" %>
 <%@ page import="java.sql.SQLException" %>
 <%@ page import="java.util.Map" %>
+
+<%@ page import="org.dspace.statistics.ItemWithBitstreamVsTotalCounter" %>
 
 <%@ taglib uri="http://www.dspace.org/dspace-tags.tld" prefix="dspace" %>
 
@@ -72,7 +74,7 @@
 </style>
 
 <%!
-    void showCommunity(String listType, String listNum, Community c, JspWriter out, HttpServletRequest request, ItemCounter ic,
+    void showCommunity(String listType, String listNum, Community c, JspWriter out, HttpServletRequest request, ItemCounter ic, PageContext pageContext,
             Map collectionMap, Map subcommunityMap) throws ItemCountException, IOException, SQLException
     {
         boolean showLogos = ConfigurationManager.getBooleanProperty("jspui.community-list.logos", true);
@@ -81,11 +83,11 @@
         Bitstream logo = c.getLogo();
         if (showLogos && logo != null)
         {
-            out.println("<a href=\"" + request.getContextPath() + "/handle/" 
-                + c.getHandle() + "\"><img class=\"media-object img-responsive\" src=\"" + 
+            out.println("<a href=\"" + request.getContextPath() + "/handle/"
+                + c.getHandle() + "\"><img class=\"media-object img-responsive\" src=\"" +
                 request.getContextPath() + "/retrieve/" + logo.getID() + "\" alt=\"community logo\"></a>");
         }
-        out.println( "<div><h4 class=\"media-heading\"><a href=\"" + request.getContextPath() + "/handle/" 
+        out.println( "<div><h4 class=\"media-heading\"><a href=\"" + request.getContextPath() + "/handle/"
             + c.getHandle() + "\">" + c.getMetadata("name") + "</a>");
         if(ConfigurationManager.getBooleanProperty("webui.strengths.show"))
         {
@@ -95,7 +97,10 @@
         if (StringUtils.isNotBlank(c.getMetadata("short_description")))
         {
             out.println(c.getMetadata("short_description"));
+            out.println(" | ");
         }
+        out.println(LocaleSupport.getLocalizedMessage(pageContext, "jsp.ItemWithBitstreamVsTotalCounter.prefix"));
+        out.println(ItemWithBitstreamVsTotalCounter.getCommunityCount(c).toString());
         out.println("<br></div>");
         out.println( "</div>");
 
@@ -118,11 +123,11 @@
                 Bitstream logoCol = cols[j].getLogo();
                 if (showLogos && logoCol != null)
                 {
-                    out.println("<a class=\"pull-left col-md-2\" href=\"" + request.getContextPath() + "/handle/" 
-                        + cols[j].getHandle() + "\"><img class=\"media-object img-responsive\" src=\"" + 
+                    out.println("<a class=\"pull-left col-md-2\" href=\"" + request.getContextPath() + "/handle/"
+                        + cols[j].getHandle() + "\"><img class=\"media-object img-responsive\" src=\"" +
                         request.getContextPath() + "/retrieve/" + logoCol.getID() + "\" alt=\"collection logo\"></a>");
                 }
-                out.println("<a href=\"" + request.getContextPath() + "/handle/" + cols[j].getHandle() + "\">" + cols[j].getMetadata("name") +"</a>");
+                out.println("<a href=\"" + request.getContextPath() + "/handle/" + cols[j].getHandle() + "\">" + cols[j].getMetadata("name") + " [" + ItemWithBitstreamVsTotalCounter.getCollectionCount(cols[j]).toString() +"]</a>");
                 if(ConfigurationManager.getBooleanProperty("webui.strengths.show"))
                 {
                     out.println(" [" + ic.getCount(cols[j]) + "]");
@@ -164,8 +169,8 @@
         if(index%3==0) out.println("<tr>");
         out.println("<td>");
         out.println("<li>");
-        out.println("<a href=\"" + request.getContextPath() + "/handle/" 
-            + c.getHandle() + "\">" + c.getMetadata("name") + "</a>");
+        out.println("<a href=\"" + request.getContextPath() + "/handle/"
+            + c.getHandle() + "\">" + c.getMetadata("name") + " [" + ItemWithBitstreamVsTotalCounter.getCommunityCount(c).toString() + "]</a>");
         if(ConfigurationManager.getBooleanProperty("webui.strengths.show"))
         {
             out.println(" <span class=\"badge\">" + ic.getCount(c) + "</span>");
@@ -184,7 +189,7 @@
 <%
     if (admin_button)
     {
-%>     
+%>
 <dspace:sidebar>
             <div class="panel panel-warning">
             <div class="panel-heading">
@@ -209,13 +214,13 @@
 <% if (communities.length != 0)
 {
 %>
-<% 
+<%
         for (int i = 0; i < communities.length; i++)
         {
             out.println("<div class=\"item\">");
             String listNum="list"+i;
             String listType="media-list";
-            showCommunity(listType, "list"+i, communities[i], out, request, ic, collectionMap, subcommunityMap);
+            showCommunity(listType, "list"+i, communities[i], out, request, ic, pageContext, collectionMap, subcommunityMap);
             out.println("</div>");
         }
 %>
