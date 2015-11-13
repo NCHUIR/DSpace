@@ -1,0 +1,14 @@
+dspace:
+  build: .
+  ports:
+   - "8080:8080"
+  volumes:
+   - .:/dspace-src
+  volumes_from:
+   - db
+  links:
+   - db
+db:
+  image: postgres 
+  volumes:
+   - /var/run/postgresql
