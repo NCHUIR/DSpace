@@ -294,7 +294,7 @@
                     [<%= ic.getCount(subcommunities[j]) %>]
 <%
                 }
-%>
+%> [<%= ItemWithBitstreamVsTotalCounter.getCommunityCount(subcommunities[j]).toString() %>]
 	    		<% if (remove_button) { %>
 	                <form class="btn-group" method="post" action="<%=request.getContextPath()%>/tools/edit-communities">
 			          <input type="hidden" name="parent_community_id" value="<%= community.getID() %>" />
