@@ -327,19 +327,23 @@ public class ItemWithBitstreamVsTotalCounter implements Runnable
     }
 
     private void countCommunityRecursively(Community[] communities,Map<Integer,ItemWithBitstreamVsTotalCounter> communityCount,ItemWithBitstreamVsTotalCounter addCnt) throws SQLException {
-        ItemWithBitstreamVsTotalCounter tmpCnt;
         for (Community community: communities) {
-            tmpCnt = communityCount.get(community.getID());
-            if(tmpCnt != null){
-                tmpCnt.number_of_bs += addCnt.number_of_bs;
-                tmpCnt.number_of_items += addCnt.number_of_items;
-            }
-            else {
-                communityCount.put(community.getID(),new ItemWithBitstreamVsTotalCounter(addCnt));
-            }
+            countCommunity(community,communityCount,addCnt);
 
             Community[] parentCommunities = community.getAllParents();
-            countCommunityRecursively(parentCommunities,communityCount,addCnt);
+            for (Community upperCommunity: parentCommunities)
+                countCommunity(upperCommunity,communityCount,addCnt);
+        }
+    }
+
+    private void countCommunity(Community community,Map<Integer,ItemWithBitstreamVsTotalCounter> communityCount,ItemWithBitstreamVsTotalCounter addCnt) throws SQLException {
+        ItemWithBitstreamVsTotalCounter tmpCnt = communityCount.get(community.getID());
+        if(tmpCnt != null){
+            tmpCnt.number_of_bs += addCnt.number_of_bs;
+            tmpCnt.number_of_items += addCnt.number_of_items;
+        }
+        else {
+            communityCount.put(community.getID(),new ItemWithBitstreamVsTotalCounter(addCnt));
         }
     }
 }
