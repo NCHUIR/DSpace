@@ -4,11 +4,19 @@ dspace:
    - "8080:8080"
   volumes:
    - .:/dspace-src
+   - ./docker:/deploy
   volumes_from:
    - db
   links:
    - db
+  environment:
+    POSTGRES_HOST: /var/run/postgres
+  env_file:
+   - docker/postgres.conf
+   - build.properties
 db:
   image: postgres 
   volumes:
    - /var/run/postgresql
+  env_file:
+   - docker/postgres.conf
