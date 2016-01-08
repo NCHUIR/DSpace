@@ -25,6 +25,8 @@
 <%
     String sidebar = (String) request.getAttribute("dspace.layout.sidebar");
     ItemWithBitstreamVsTotalCounter siteCount = ItemWithBitstreamVsTotalCounter.getSiteCount();
+    googleAnalytics Count = googleAnalytics.getSiteCount();
+
 %>
     <%-- Right-hand side bar if appropriate --%>
 <%
@@ -50,6 +52,11 @@
                 <span>
                     <fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix" /><%= siteCount.toString() %>
                 </span>
+                <br>
+                <span id="text">
+                    總瀏覽人數 :<%= googleAnalytics.GetSessions() %>
+                </span>
+
             </div>
             <div id="footer_feedback" class="pull-right">
                 <p class="text-muted"><fmt:message key="jsp.layout.footer-default.text"/>&nbsp;-
