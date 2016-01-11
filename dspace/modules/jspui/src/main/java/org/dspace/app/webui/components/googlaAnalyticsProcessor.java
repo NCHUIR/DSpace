@@ -18,7 +18,7 @@ import org.dspace.analytics.googleAnalytics;
 /**
  * Created by libuser on 2016/1/8.
  */
-public class googlaAnalyticsProcessor {
+public class googlaAnalyticsProcessor implements SiteHomeProcessor{
     private static Logger log = Logger.getLogger(ItemWithBitstreamVsTotalProcessor.class);
 
     // Configs and settings
@@ -33,12 +33,8 @@ public class googlaAnalyticsProcessor {
     public static String getPrefixForNTUR() {
         return prefixForNTUR;
     }
-
-    @Override
-    public void process(Context context, HttpServletRequest request,
-                        HttpServletResponse response) throws PluginException,
-            AuthorizeException
-    {
+	@Override
+    public void process(Context context, HttpServletRequest request,HttpServletResponse response) throws PluginException, AuthorizeException{
         googleAnalytics.update();
     }
 }

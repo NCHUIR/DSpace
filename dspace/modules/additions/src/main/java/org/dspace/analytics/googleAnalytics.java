@@ -29,12 +29,12 @@ import org.dspace.core.ConfigurationManager;
 /**
  * Created by libuser on 2016/1/8.
  */
-public class googleAnalytics implements Runnable{{
+public class googleAnalytics implements Runnable{
     private static Logger log = Logger.getLogger(googleAnalytics.class);
 
     private static final String APPLICATION_NAME = "Hello Analytics";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static final String KEY_FILE_LOCATION = "dspace-f4e08c603517.p12";
+    private static final String KEY_FILE_LOCATION = "/home/nchuir/dspace-src/dspace/modules/additions/src/main/java/org/dspace/analytics/dspace-f4e08c603517.p12";
     private static final String SERVICE_ACCOUNT_EMAIL = "nchuir@dspace-1068.iam.gserviceaccount.com";
     private static String Sessions="";
     private static long lastUpdate ;
@@ -58,7 +58,7 @@ public class googleAnalytics implements Runnable{{
         log.debug(String.format(" current = %d, lastUpdate = %d, inteval = %d, updateInterval = %d", current, lastUpdate, current - lastUpdate, updateInterval));
         if((current - lastUpdate) > updateInterval){
             lastUpdate = current;
-            (new Thread(new ItemWithBitstreamVsTotalCounter(context))).run();
+            (new Thread(new googleAnalytics())).run();
         }
     }
 
@@ -74,7 +74,7 @@ public class googleAnalytics implements Runnable{{
         }
     }
 
-    public String GetSessions(){
+    public static String GetSessions(){
         return Sessions;
     }
 

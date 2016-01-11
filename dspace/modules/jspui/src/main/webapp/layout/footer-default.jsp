@@ -21,12 +21,13 @@
 
 <%@ page import="org.dspace.statistics.ItemWithBitstreamVsTotalCounter" %>
 <%@ page import="org.dspace.app.webui.components.ItemWithBitstreamVsTotalProcessor" %>
+<%@ page import="org.dspace.analytics.googleAnalytics" %>
+<%@ page import="org.dspace.app.webui.components.googlaAnalyticsProcessor" %>
 
 <%
     String sidebar = (String) request.getAttribute("dspace.layout.sidebar");
     ItemWithBitstreamVsTotalCounter siteCount = ItemWithBitstreamVsTotalCounter.getSiteCount();
-    googleAnalytics Count = googleAnalytics.getSiteCount();
-
+    
 %>
     <%-- Right-hand side bar if appropriate --%>
 <%
@@ -47,7 +48,8 @@
     <dspace:include page="/layout/copyright.jsp" />
     <footer class="navbar-inverse navbar-bottom">
     <!-- <%= ItemWithBitstreamVsTotalProcessor.getPrefixForNTUR() %> <%= siteCount.toString() %> -->
-    <div id="designedby" class="container text-muted">
+    <!-- 總瀏覽人數 : <%= googleAnalytics.GetSessions() %> -->
+	<div id="designedby" class="container text-muted">
             <div style="float: left; padding-top: 12px;">
                 <span>
                     <fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix" /><%= siteCount.toString() %>
