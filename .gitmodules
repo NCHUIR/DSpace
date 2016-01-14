@@ -1,3 +1,3 @@
 [submodule "docker"]
-	path = docker
+	path = docker-dspace
 	url = https://github.com/NCHUIR/docker-dspace.git

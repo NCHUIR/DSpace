@@ -1,4 +1,4 @@
-#name of container: dspace-5.3-nchuir-src
+#name of container: dspace-5.3-cris-nchuir-src
 #versison of container: 0.1
 FROM quantumobject/docker-tomcat8
 
@@ -17,13 +17,19 @@ RUN apt-get update && apt-get install -y -q --force-yes python-software-properti
                     && rm -rf /var/lib/apt/lists/*
 
 # === ADD source code ===
-# ADD . /dspace-src
+ADD . /dspace-src
 
 # === ADD deploy scripts ===
-ADD docker /deploy
+ADD docker-dspace /deploy
+
+# === default env ===
+ENV dspace.source.dir /dspace-src
 
 # === RUN pre-conf.sh ===
 RUN bash /deploy/setup.sh
+
+# === Default Service port ===
+EXPOSE 8080
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
