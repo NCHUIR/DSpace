@@ -5,19 +5,60 @@ core:
    - ./docker-dspace/conf/dspace.conf
    - ./build.properties
 data:
-  extends: 
-    file: ./docker-dspace/docker-compose.yml
-    service: data
+  extends: core
+  volumes: 
+   - /data
+   - /dbdata
+  command: '/bin/true'
+production:
+  extends: core
+  volumes_from: 
+   - data
+  ports:
+   - "8080"
+  restart: always
+prepare_dev:
+  extends: core
+  volumes_from: 
+   - data
+  volumes: 
+   - ./docker-dspace/data:/data_target
+  # - ./docker-dspace/bin:/usr/local/bin
+  command: 'volume.backup data'
 dev:
-  extends: 
-    file: ./docker-dspace/docker-compose.yml
-    service: dev
-prepare_dev:
-  extends: 
-    file: ./docker-dspace/docker-compose.yml
-    service: prepare_dev
-prepare_dev:
-  extends: 
-    file: ./docker-dspace/docker-compose.yml
-    service: prepare_dev
-
+  extends: core
+  volumes_from: 
+   - data
+  volumes: 
+   - ./docker-dspace/data:/data
+   - ./docker-dspace/bin:/usr/local/bin
+  ports:
+   - "8080"
+   - "8080:8080"
+rebuild_run:
+  extends: core
+  volumes_from: 
+   - data
+   - rebuild_run_cache
+  volumes: 
+   - ./docker-dspace/data:/data
+   - ./docker-dspace/bin:/usr/local/bin
+   - ./:/dspace-src
+  ports:
+   - "8080"
+   - "8080:8080"
+  command: 'bash -c "dspace.rebuild; /sbin/my_init"'
+rebuild_run_cache:
+  extends: core
+  volumes: 
+   - /dspace-src
+   - /dspace
+  command: '/bin/true'
+backup:
+  extends: core
+  volumes_from: 
+   - data
+  volumes: 
+   - ./docker-dspace/data:/data_target
+  # - ./docker-dspace/bin:/usr/local/bin
+  command: 'volume.backup dbdata'
