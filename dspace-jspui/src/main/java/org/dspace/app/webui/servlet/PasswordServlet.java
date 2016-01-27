@@ -63,7 +63,8 @@ public class PasswordServlet extends DSpaceServlet
         int status = AuthenticationManager.authenticate(context, email, password,
                         null, request);
  
-       
+        log.debug(status);
+
         if (status == AuthenticationMethod.SUCCESS)
         {
             // Logged in OK.
