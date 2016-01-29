@@ -23,26 +23,24 @@ import java.util.Date;
 import org.dspace.core.ConfigurationManager;
 
 /**
- * A simple example of how to access the Google Analytics API using a service
- * account.
- */
-/**
- * Created by libuser on 2016/1/8.
+ * Using Google Analytics API to count No. of visitors
+ *
+ * Created by Little Black on 2016/1/14.
  */
 public class googleAnalytics implements Runnable{
     private static Logger log = Logger.getLogger(googleAnalytics.class);
 
-    private static final String APPLICATION_NAME = "Hello Analytics";
+    private static final String APPLICATION_NAME = "Dspace Analytics";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static final String KEY_FILE_LOCATION = "/home/nchuir/dspace-src/dspace/modules/additions/src/main/java/org/dspace/analytics/dspace-f4e08c603517.p12";
+    private static final String KEY_FILE_LOCATION = "/home/nchuir/dspace-src/dspace/modules/additions/src/main/resources/dspace-f4e08c603517.p12";
     private static final String SERVICE_ACCOUNT_EMAIL = "nchuir@dspace-1068.iam.gserviceaccount.com";
     private static String Sessions="";
-    private static long lastUpdate ;
+    private static long lastUpdate = 0;
     private static long updateInterval = 43200000;
 
     static {
         lastUpdate = 0;
-        updateInterval = ConfigurationManager.getIntProperty("ItemWithBitstreamVsTotalCounter.updateInterval",(int) updateInterval);
+        updateInterval = ConfigurationManager.getIntProperty("GoogleAnalytics.updateInterval",(int) updateInterval);
         try{
             log.info("update at init ... ");
             update();
@@ -67,23 +65,23 @@ public class googleAnalytics implements Runnable{
         try {
             Analytics analytics = initializeAnalytics();
             String profile = getFirstProfileId(analytics);
-            System.out.println("First Profile Id: "+ profile);
-            printResults(getResults(analytics, profile));
+		GaData results = getResults(analytics, profile);
+		if (results != null && !results.getRows().isEmpty()) {
+            		Sessions = results.getRows().get(0).get(0);
+        	} else {
+            		Sessions = "No results found";
+        	}
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static String GetSessions(){
-        return Sessions;
-    }
-
-
+    public static String GetSessions(){ return Sessions; }
 
     private static Analytics initializeAnalytics() throws Exception {
         // Initializes an authorized analytics service object.
-
-        // Construct a GoogleCredential object with the service account email
+	
+	// Construct a GoogleCredential object with the service account email
         // and p12 file downloaded from the developer console.
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         GoogleCredential credential = new GoogleCredential.Builder()
@@ -119,7 +117,8 @@ public class googleAnalytics implements Runnable{
             if (properties.getItems().isEmpty()) {
                 System.err.println("No Webproperties found");
             } else {
-                String firstWebpropertyId = properties.getItems().get(2).getId();
+                //get the ID of 140.120.80,8 website
+		String firstWebpropertyId = properties.getItems().get(2).getId();
 
                 // Query for the list views (profiles) associated with the property.
                 Profiles profiles = analytics.management().profiles()
@@ -139,21 +138,9 @@ public class googleAnalytics implements Runnable{
     private static GaData getResults(Analytics analytics, String profileId) throws IOException {
         // Query the Core Reporting API for the number of sessions
         // in the past seven days.
+	//2014-10-08 is the first day Dspace-Nchu online
         return analytics.data().ga()
-                .get("ga:" + profileId, "2014-10-08", "today", "ga:sessions")
-                .execute();
-    }
-
-    private static void printResults(GaData results) {
-        // Parse the response from the Core Reporting API for
-        // the profile name and number of sessions.
-        if (results != null && !results.getRows().isEmpty()) {
-            System.out.println("View (Profile) Name: "
-                    + results.getProfileInfo().getProfileName());
-            Sessions = results.getRows().get(0).get(0);
-            System.out.println("Total Sessions: " + Sessions);
-        } else {
-            System.out.println("No results found");
-        }
+		.get("ga:" + profileId, "2014-10-08", "today", "ga:sessions")
+		.execute();
     }
 }

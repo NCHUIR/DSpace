@@ -21,6 +21,7 @@
 
 <%@ page import="org.dspace.statistics.ItemWithBitstreamVsTotalCounter" %>
 <%@ page import="org.dspace.app.webui.components.ItemWithBitstreamVsTotalProcessor" %>
+
 <%@ page import="org.dspace.analytics.googleAnalytics" %>
 <%@ page import="org.dspace.app.webui.components.googlaAnalyticsProcessor" %>
 
@@ -47,16 +48,14 @@
     <%-- Page footer --%>
     <dspace:include page="/layout/copyright.jsp" />
     <footer class="navbar-inverse navbar-bottom">
-    <!-- <%= ItemWithBitstreamVsTotalProcessor.getPrefixForNTUR() %> <%= siteCount.toString() %> -->
-    <!-- 總瀏覽人數 : <%= googleAnalytics.GetSessions() %> -->
 	<div id="designedby" class="container text-muted">
             <div style="float: left; padding-top: 12px;">
                 <span>
                     <fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix" /><%= siteCount.toString() %>
                 </span>
                 <br>
-                <span id="text">
-                    總瀏覽人數 :<%= googleAnalytics.GetSessions() %>
+                <span>
+                    <fmt:message key="jsp.googleAnalytics.prefix" /><%= googleAnalytics.GetSessions() %>
                 </span>
 
             </div>
