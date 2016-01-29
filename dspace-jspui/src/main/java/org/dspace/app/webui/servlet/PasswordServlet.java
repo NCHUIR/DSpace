@@ -62,12 +62,15 @@ public class PasswordServlet extends DSpaceServlet
         // Locate the eperson
         int status = AuthenticationManager.authenticate(context, email, password,
                         null, request);
- 
        
         if (status == AuthenticationMethod.SUCCESS)
         {
+            log.debug("start login");
+
             // Logged in OK.
             Authenticate.loggedIn(context, request, context.getCurrentUser());
+
+            log.debug("login ok");
 
             // Set the Locale according to user preferences
             Locale epersonLocale = I18nUtil.getEPersonLocale(context.getCurrentUser());

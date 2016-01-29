@@ -20,7 +20,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import java.util.*;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
@@ -52,14 +51,12 @@ public class SSO
     implements AuthenticationMethod {
 
     /** log4j category */
-    private static Logger log = Logger.getLogger(PasswordAuthentication.class);
+    private static Logger log = Logger.getLogger(SSO.class);
 
     static HashMap code2organ;
     static HashMap code2status;
 
     static {
-        String code2organStr = ConfigurationManager.getProperty("authentication-NchuLibSSO","code2organ");
-        String code2statusStr = ConfigurationManager.getProperty("authentication-NchuLibSSO","code2status");
         code2organ = new HashMap();
         code2status = new HashMap();
 
@@ -115,7 +112,6 @@ public class SSO
             throws SQLException
     {
     }
-
     /**
      * We always allow the user to change their password.
      */
@@ -173,39 +169,6 @@ public class SSO
         return new int[0];
     }
 
-    /**
-     * Check credentials: username must match the email address of an
-     * EPerson record, and that EPerson must be allowed to login.
-     * Password must match its password.  Also checks for EPerson that
-     * is only allowed to login via an implicit method
-     * and returns <code>CERT_REQUIRED</code> if that is the case.
-     *
-     * @param context
-     *  DSpace context, will be modified (EPerson set) upon success.
-     *
-     * @param username
-     *  Username (or email address) when method is explicit. Use null for
-     *  implicit method.
-     *
-     * @param password
-     *  Password for explicit auth, or null for implicit method.
-     *
-     * @param realm
-     *  Realm is an extra parameter used by some authentication methods, leave null if
-     *  not applicable.
-     *
-     * @param request
-     *  The HTTP request that started this operation, or null if not applicable.
-     *
-     * @return One of:
-     *   SUCCESS, BAD_CREDENTIALS, CERT_REQUIRED, NO_SUCH_USER, BAD_ARGS
-     * <p>Meaning:
-     * <br>SUCCESS         - authenticated OK.
-     * <br>BAD_CREDENTIALS - user exists, but assword doesn't match
-     * <br>CERT_REQUIRED   - not allowed to login this way without X.509 cert.
-     * <br>NO_SUCH_USER    - no EPerson with matching email address.
-     * <br>BAD_ARGS        - missing username, or user matched but cannot login.
-     */
     public int authenticate(Context context,
                             String username,
                             String password,
@@ -219,9 +182,13 @@ public class SSO
             log.info(LogManager.getHeader(context, "authenticate", "attempting password auth of user="+username));
             try
             {
-                eperson = EPerson.findByEmail(context, username.toLowerCase());
+
+                if(SSO.user_check(username, password) == 1)
+                    return AuthenticationMethod.SUCCESS;
+                else
+                    return NO_SUCH_USER;
             }
-            catch (AuthorizeException e)
+            catch (Exception e)
             {
                 log.trace("Failed to authorize looking up EPerson", e);
             }
@@ -263,44 +230,17 @@ public class SSO
         }
     }
 
-    /**
-     * Returns URL of password-login servlet.
-     *
-     * @param context
-     *  DSpace context, will be modified (EPerson set) upon success.
-     *
-     * @param request
-     *  The HTTP request that started this operation, or null if not applicable.
-     *
-     * @param response
-     *  The HTTP response from the servlet method.
-     *
-     * @return fully-qualified URL
-     */
-    public String loginPageURL(Context context,
-                               HttpServletRequest request,
-                               HttpServletResponse response)
-    {
-        return response.encodeRedirectURL(request.getContextPath() +
-                "/password-login");
+    @Override
+    public String loginPageURL(Context context, HttpServletRequest request, HttpServletResponse response) {
+        return null;
     }
 
-    /**
-     * Returns message key for title of the "login" page, to use
-     * in a menu showing the choice of multiple login methods.
-     *
-     * @param context
-     *  DSpace context, will be modified (EPerson set) upon success.
-     *
-     * @return Message key to look up in i18n message catalog.
-     */
-    public String loginPageTitle(Context context)
-    {
-        return "org.dspace.eperson.PasswordAuthentication.title";
+    @Override
+    public String loginPageTitle(Context context) {
+        return null;
     }
 
-    public static String user_check(String username, String password) {
-        String collections_name = "";
+    public static int user_check(String username, String password) {
 
         HashMap collections = new HashMap();
         HashMap eperson = new HashMap();
@@ -397,25 +337,22 @@ public class SSO
                     try {
                         if ((Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 7) ||
                                 (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 8) ||
-                                (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 9))
-                        {
-                            collections_name = (String) collections.get(getTagValue("z305-bor-type", eElement));
-                            // String identity = eperson.get(getTagValue("z305-bor-status", eElement));
+                                (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 9)) {
+                            creat_user(username, password);
                         }
-                        else
-                        {
-                            System.out.println("您的身分並不是職員、專任教師、兼任人員");
+                        else {
+                            log.debug("您的身分並不是職員、專任教師、兼任人員");
                         }
                     }
                     catch (Exception e) {
-                        System.out.println("驗證失敗");
+                        log.debug("驗證失敗");
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return collections_name;
+        return 0;
     }
     private static String getTagValue(String sTag, Element eElement) {
         NodeList nlList = eElement.getElementsByTagName(sTag).item(0).getChildNodes();
@@ -423,5 +360,38 @@ public class SSO
         return nValue.getNodeValue();
     }
 
+    public static void creat_user (String username,  String password) throws SQLException {
+        log.debug("creat user");
+        Context context = new Context();
+
+        // Disable authorization since this only runs from the local commandline.
+        context.turnOffAuthorisationSystem();
+
+        EPerson eperson = null;
+        try {
+            eperson = EPerson.create(context);
+        } catch (SQLException ex) {
+            context.abort();
+            System.err.println(ex.getMessage());
+        } catch (AuthorizeException ex) { /* XXX SNH */ }
+        eperson.setCanLogIn(true);
+        eperson.setSelfRegistered(false);
+
+        eperson.setEmail(username);
+        eperson.setLanguage("zh_TW");
+        eperson.setNetid(username);
+        eperson.setPassword(password);
+
+        try {
+            eperson.update();
+            context.commit();
+            context.setCurrentUser(eperson);
+            System.out.printf("Created EPerson %d\n", eperson.getID());
+        } catch (SQLException ex) {
+            context.abort();
+            System.err.println(ex.getMessage());
+        } catch (AuthorizeException ex) { /* XXX SNH */ }
+
+    }
 }
 
