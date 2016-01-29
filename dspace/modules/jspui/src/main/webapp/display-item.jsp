@@ -303,7 +303,7 @@ j(document).ready(function() {
 <!-- TAIR-Related-Article Display-->
 <div>&nbsp;</div>
 <div class="panel panel-info">
-	<div class="panel-heading">TAIR-Related-Article</div>
+	<div class="panel-heading"><fmt:message key="jsp.display-item.tair-related"/></div>
 	<div class="panel-body">
         	<div id="related-dspace-content">
                 	<c:import url="http://ir.nctu.edu.tw/related_article/">
