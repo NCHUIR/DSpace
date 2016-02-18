@@ -48,19 +48,10 @@ import org.w3c.dom.Element;
  * @version $Revision$
  */
 public class SSO
-    implements AuthenticationMethod {
+        implements AuthenticationMethod {
 
     /** log4j category */
     private static Logger log = Logger.getLogger(SSO.class);
-
-    static HashMap code2organ;
-    static HashMap code2status;
-
-    static {
-        code2organ = new HashMap();
-        code2status = new HashMap();
-
-    }
 
     /**
      * Look to see if this email address is allowed to register.
@@ -112,6 +103,7 @@ public class SSO
             throws SQLException
     {
     }
+
     /**
      * We always allow the user to change their password.
      */
@@ -169,6 +161,39 @@ public class SSO
         return new int[0];
     }
 
+    /**
+     * Check credentials: username must match the email address of an
+     * EPerson record, and that EPerson must be allowed to login.
+     * Password must match its password.  Also checks for EPerson that
+     * is only allowed to login via an implicit method
+     * and returns <code>CERT_REQUIRED</code> if that is the case.
+     *
+     * @param context
+     *  DSpace context, will be modified (EPerson set) upon success.
+     *
+     * @param username
+     *  Username (or email address) when method is explicit. Use null for
+     *  implicit method.
+     *
+     * @param password
+     *  Password for explicit auth, or null for implicit method.
+     *
+     * @param realm
+     *  Realm is an extra parameter used by some authentication methods, leave null if
+     *  not applicable.
+     *
+     * @param request
+     *  The HTTP request that started this operation, or null if not applicable.
+     *
+     * @return One of:
+     *   SUCCESS, BAD_CREDENTIALS, CERT_REQUIRED, NO_SUCH_USER, BAD_ARGS
+     * <p>Meaning:
+     * <br>SUCCESS         - authenticated OK.
+     * <br>BAD_CREDENTIALS - user exists, but assword doesn't match
+     * <br>CERT_REQUIRED   - not allowed to login this way without X.509 cert.
+     * <br>NO_SUCH_USER    - no EPerson with matching email address.
+     * <br>BAD_ARGS        - missing username, or user matched but cannot login.
+     */
     public int authenticate(Context context,
                             String username,
                             String password,
@@ -182,13 +207,11 @@ public class SSO
             log.info(LogManager.getHeader(context, "authenticate", "attempting password auth of user="+username));
             try
             {
-
                 if(SSO.user_check(username, password) == 1)
-                    return AuthenticationMethod.SUCCESS;
-                else
-                    return NO_SUCH_USER;
+                    creat_user(username, password);
+                eperson = EPerson.findByEmail(context, username.toLowerCase());
             }
-            catch (Exception e)
+            catch (AuthorizeException e)
             {
                 log.trace("Failed to authorize looking up EPerson", e);
             }
@@ -230,14 +253,40 @@ public class SSO
         }
     }
 
-    @Override
-    public String loginPageURL(Context context, HttpServletRequest request, HttpServletResponse response) {
-        return null;
+    /**
+     * Returns URL of password-login servlet.
+     *
+     * @param context
+     *  DSpace context, will be modified (EPerson set) upon success.
+     *
+     * @param request
+     *  The HTTP request that started this operation, or null if not applicable.
+     *
+     * @param response
+     *  The HTTP response from the servlet method.
+     *
+     * @return fully-qualified URL
+     */
+    public String loginPageURL(Context context,
+                               HttpServletRequest request,
+                               HttpServletResponse response)
+    {
+        return response.encodeRedirectURL(request.getContextPath() +
+                "/password-login");
     }
 
-    @Override
-    public String loginPageTitle(Context context) {
-        return null;
+    /**
+     * Returns message key for title of the "login" page, to use
+     * in a menu showing the choice of multiple login methods.
+     *
+     * @param context
+     *  DSpace context, will be modified (EPerson set) upon success.
+     *
+     * @return Message key to look up in i18n message catalog.
+     */
+    public String loginPageTitle(Context context)
+    {
+        return "org.dspace.eperson.PasswordAuthentication.title";
     }
 
     public static int user_check(String username, String password) {
@@ -323,44 +372,54 @@ public class SSO
         eperson.put("08" , "專任教師");
         eperson.put("09" , "兼任人員");
 
-        try {
+        try
+        {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse("http://webpac.lib.nchu.edu.tw/X?op=bor-auth&library=top51&bor_id=" + username + "&verification=" + password);
             doc.getDocumentElement().normalize();
 
             NodeList nList = doc.getElementsByTagName("bor-auth");
-            for (int i = 0; i < nList.getLength(); i++) {
+            for (int i = 0; i < nList.getLength(); i++)
+            {
                 Node nNode = nList.item(i);
-                if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+                if (nNode.getNodeType() == Node.ELEMENT_NODE)
+                {
                     Element eElement = (Element) nNode;
-                    try {
+                    try
+                    {
                         if ((Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 7) ||
                                 (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 8) ||
-                                (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 9)) {
-                            creat_user(username, password);
+                                (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 9))
+                        {
+                            return 1;
                         }
                         else {
                             log.debug("您的身分並不是職員、專任教師、兼任人員");
                         }
                     }
-                    catch (Exception e) {
+                    catch (Exception e)
+                    {
                         log.debug("驗證失敗");
                     }
                 }
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
         return 0;
     }
-    private static String getTagValue(String sTag, Element eElement) {
+    private static String getTagValue(String sTag, Element eElement)
+    {
         NodeList nlList = eElement.getElementsByTagName(sTag).item(0).getChildNodes();
         Node nValue = (Node) nlList.item(0);
         return nValue.getNodeValue();
     }
 
-    public static void creat_user (String username,  String password) throws SQLException {
+    public static void creat_user (String username,  String password) throws SQLException
+    {
         log.debug("creat user");
         Context context = new Context();
 
@@ -368,12 +427,18 @@ public class SSO
         context.turnOffAuthorisationSystem();
 
         EPerson eperson = null;
-        try {
+        try
+        {
             eperson = EPerson.create(context);
-        } catch (SQLException ex) {
+        } catch (SQLException ex)
+        {
             context.abort();
             System.err.println(ex.getMessage());
-        } catch (AuthorizeException ex) { /* XXX SNH */ }
+        }
+        catch (AuthorizeException ex)
+        {
+            /* XXX SNH */
+        }
         eperson.setCanLogIn(true);
         eperson.setSelfRegistered(false);
 
@@ -382,16 +447,21 @@ public class SSO
         eperson.setNetid(username);
         eperson.setPassword(password);
 
-        try {
+        try
+        {
             eperson.update();
             context.commit();
             context.setCurrentUser(eperson);
             System.out.printf("Created EPerson %d\n", eperson.getID());
-        } catch (SQLException ex) {
+        }
+        catch (SQLException ex)
+        {
             context.abort();
             System.err.println(ex.getMessage());
-        } catch (AuthorizeException ex) { /* XXX SNH */ }
-
+        }
+        catch (AuthorizeException ex)
+        {
+            /* XXX SNH */
+        }
     }
 }
-
