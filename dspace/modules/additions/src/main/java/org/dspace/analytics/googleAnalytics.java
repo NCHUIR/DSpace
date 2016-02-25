@@ -32,7 +32,7 @@ public class googleAnalytics implements Runnable{
 
     private static final String APPLICATION_NAME = "Dspace Analytics";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
-    private static final String KEY_FILE_LOCATION = "/home/nchuir/dspace-src/dspace/modules/additions/src/main/resources/dspace-f4e08c603517.p12";
+    private static final String KEY_FILE_LOCATION = ConfigurationManager.getProperty("GoogleAnalytics.privateKey.location");
     private static final String SERVICE_ACCOUNT_EMAIL = "nchuir@dspace-1068.iam.gserviceaccount.com";
     private static String Sessions="";
     private static long lastUpdate = 0;
@@ -43,7 +43,7 @@ public class googleAnalytics implements Runnable{
         updateInterval = ConfigurationManager.getIntProperty("GoogleAnalytics.updateInterval",(int) updateInterval);
         try{
             log.info("update at init ... ");
-            update();
+		update();
         }catch(Exception e){
             log.error("Error at service startup");
             log.error(e.toString());
@@ -56,7 +56,8 @@ public class googleAnalytics implements Runnable{
         log.debug(String.format(" current = %d, lastUpdate = %d, inteval = %d, updateInterval = %d", current, lastUpdate, current - lastUpdate, updateInterval));
         if((current - lastUpdate) > updateInterval){
             lastUpdate = current;
-            (new Thread(new googleAnalytics())).run();
+            log.debug("Start update ...");
+		(new Thread(new googleAnalytics())).run();
         }
     }
 
@@ -71,6 +72,7 @@ public class googleAnalytics implements Runnable{
         	} else {
             		Sessions = "No results found";
         	}
+		log.info(Sessions);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,7 +81,7 @@ public class googleAnalytics implements Runnable{
     public static String GetSessions(){ return Sessions; }
 
     private static Analytics initializeAnalytics() throws Exception {
-        // Initializes an authorized analytics service object.
+	// Initializes an authorized analytics service object.
 	
 	// Construct a GoogleCredential object with the service account email
         // and p12 file downloaded from the developer console.

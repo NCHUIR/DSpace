@@ -29,8 +29,7 @@
             <!-- Filter using the properties file defined by dspace-parent POM -->
             <filter>${filters.file}</filter>
         </filters>
-    
-        <plugins>
+	<plugins>
             <!--  Default project assembly. Calls 'assembly.xml', which
                   generates the DSpace build directory. -->
             <plugin>
@@ -99,7 +98,7 @@
                              </descriptors>
                              <tarLongFileMode>gnu</tarLongFileMode>
                              <finalName>dspace-${project.version}</finalName>
-                          </configuration>
+			  </configuration>
                           <phase>package</phase>
                           <goals>
                              <goal>single</goal>
