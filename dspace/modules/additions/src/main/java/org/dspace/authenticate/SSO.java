@@ -10,6 +10,7 @@ package org.dspace.authenticate;
 import org.apache.log4j.Logger;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.core.ConfigurationManager;
+import org.dspace.core.Constants;
 import org.dspace.core.Context;
 import org.dspace.core.LogManager;
 import org.dspace.eperson.EPerson;
@@ -17,6 +18,8 @@ import org.dspace.eperson.Group;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.HashMap;
 
@@ -207,13 +210,28 @@ public class SSO
             log.info(LogManager.getHeader(context, "authenticate", "attempting password auth of user="+username));
             try
             {
-                if(SSO.user_check(username, password) == 1)
+                String user_collection = SSO.user_check(username, password);
+                if(user_collection != null) {
                     creat_user(username, password);
+                    String newName = URLDecoder.decode(user_collection, Constants.DEFAULT_ENCODING);
+                    log.debug("groupName: " + newName);
+                    Group group = Group.find(context, 17);
+                    log.debug(group);
+                    eperson = EPerson.findByEmail(context, username.toLowerCase());
+                    group.addMember(eperson);
+                    group.update();
+                    context.commit();
+                }
+                
                 eperson = EPerson.findByEmail(context, username.toLowerCase());
             }
             catch (AuthorizeException e)
             {
                 log.trace("Failed to authorize looking up EPerson", e);
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                e.printStackTrace();
             }
 
             if (eperson == null)
@@ -289,7 +307,7 @@ public class SSO
         return "org.dspace.eperson.PasswordAuthentication.title";
     }
 
-    public static int user_check(String username, String password) {
+    public static String user_check(String username, String password) {
 
         HashMap collections = new HashMap();
         HashMap eperson = new HashMap();
@@ -389,12 +407,13 @@ public class SSO
                     try
                     {
                         if ((Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 7) ||
-                                (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 8) ||
-                                (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 9))
+                            (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 8) ||
+                            (Integer.parseInt((getTagValue("z305-bor-status", eElement))) == 9))
                         {
-                            return 1;
+                            return String.valueOf(collections.get(getTagValue("z305-bor-type", eElement)));
                         }
-                        else {
+                        else
+                        {
                             log.debug("您的身分並不是職員、專任教師、兼任人員");
                         }
                     }
@@ -409,7 +428,7 @@ public class SSO
         {
             e.printStackTrace();
         }
-        return 0;
+        return null;
     }
     private static String getTagValue(String sTag, Element eElement)
     {
