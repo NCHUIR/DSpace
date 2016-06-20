@@ -420,6 +420,6 @@ public class BrowseItem extends DSpaceObject
         int[] item_ids = new int[items.length];
         for (int i = 0; i < items.length ; i++)
             item_ids[i] = items[i].getID();
-        return new BitstreamList(item_ids,"ORIGINAL",items[0].context);
+        return new BitstreamList(item_ids,"ORIGINAL",items[0].ourContext);
     }
 }

@@ -775,7 +775,7 @@ public class Bitstream extends DSpaceObject
 
     public ResourcePolicy getAnonymousReadPolicy() throws SQLException{
         ResourcePolicy thePolicy = null;
-        List policies = AuthorizeManager.getPoliciesActionFilter(bContext, this, Constants.READ);
+        List policies = AuthorizeManager.getPoliciesActionFilter(ourContext, this, Constants.READ);
         for(Iterator i = policies.iterator(); i.hasNext(); ){
             ResourcePolicy policy = (ResourcePolicy)i.next();
             if(policy.getGroupID() == 0){ // anonymous group
