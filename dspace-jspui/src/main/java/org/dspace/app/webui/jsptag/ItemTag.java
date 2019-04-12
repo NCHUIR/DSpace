@@ -285,18 +285,10 @@ public class ItemTag extends TagSupport {
                 style = styleSelection.getStyleForItem(item);
             }
 
-            // 2019/04/12 新增僅校內可下載全文之政策
-            // 世澤 mailbox@4ze.tw
-            int level = accessLevel();
-
-            if (level >= 2) {
-                if (style.equals("full")) {
-                    renderFull();
-                } else {
-                    render();
-                }
+            if (style.equals("full")) {
+                renderFull();
             } else {
-                renderAccessDenied();
+                render();
             }
 
         } catch (SQLException sqle) {
@@ -365,6 +357,17 @@ public class ItemTag extends TagSupport {
         out.print("華藝線上圖書館(自動搜尋)</a>");
         
         out.println("</p></div>");
+    }
+
+    private void newListBitstreams() throws IOException {
+            // 2019/04/12 新增僅校內可下載全文之政策
+            // 世澤 mailbox@4ze.tw
+            int level = accessLevel();
+            if (level >= 2) {
+                listBitstreams();
+            } else {
+                renderAccessDenied();
+            }
     }
 
     /**
@@ -541,7 +544,7 @@ public class ItemTag extends TagSupport {
 
         out.println("</table><br/>");
 
-        listBitstreams();
+        newListBitstreams();
 
         if (ConfigurationManager.getBooleanProperty("webui.licence_bundle.show"))
 
@@ -600,7 +603,7 @@ public class ItemTag extends TagSupport {
 
         out.println("</table>");
 
-        listBitstreams();
+        newListBitstreams();
 
         if (ConfigurationManager.getBooleanProperty("webui.licence_bundle.show")) {
             showLicence();
