@@ -350,13 +350,13 @@ public class ItemTag extends TagSupport {
     private void renderAccessDenied() throws IOException {
         JspWriter out = pageContext.getOut();
         out.println("<div class=\"container row\">");
-        out.print("<p>您沒有此文件的讀取權限！取得全文請前往");
-        out.print("<a taget=\"_blank\" href=\"http://www.airitilibrary.com/Search/ArticleSearch?ArticlesViewModel_SearchField=");
+        out.print("<p style=\"margin: 0.8rem;\">！取得全文請前往");
+        out.print("<a target=\"_blank\" href=\"http://www.airitilibrary.com/Search/ArticleSearch?ArticlesViewModel_SearchField=");
             out.print(URLEncoder.encode(item.getName(), "UTF-8"));
             out.print("&ArticlesViewModel_TitleKeywordsAbstract=&ArticlesViewModel_Author=&ArticlesViewModel_JournalBookDepartment=&ArticlesViewModel_DOI=&ArticlesViewModel_ArticleArea_Taiwan=false&ArticlesViewModel_ArticleArea_ChinaHongKongMacao=false&ArticlesViewModel_ArticleArea_American=false&ArticlesViewModel_ArticleArea_Other=false&PublicationsViewModel_SearchField=&PublicationsViewModel_PublicationName=&PublicationsViewModel_ISSN=&PublicationsViewModel_PublicationUnitName=&PublicationsViewModel_DOI=&PublicationsViewModel_PublicationArea_Taiwan=false&PublicationsViewModel_PublicationArea_ChinaHongKongMacao=false&PublicationsViewModel_PublicationArea_American=false&PublicationsViewModel_PublicationArea_Other=false\">");
-        out.print("華藝線上圖書館(自動搜尋)</a>");
+        out.print("華藝線上圖書館(自動搜尋)</a><br>");
         
-        out.println("</p></div>");
+        out.println("(搜尋結果並非100%正確)</p></div>");
     }
 
     private void newListBitstreams() throws IOException {
