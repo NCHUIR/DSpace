@@ -8,6 +8,7 @@
 package org.dspace.app.webui.jsptag;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -284,11 +285,20 @@ public class ItemTag extends TagSupport {
                 style = styleSelection.getStyleForItem(item);
             }
 
-            if (style.equals("full")) {
-                renderFull();
+            // 2019/04/12 新增僅校內可下載全文之政策
+            // 世澤 mailbox@4ze.tw
+            int level = accessLevel();
+
+            if (level >= 2) {
+                if (style.equals("full")) {
+                    renderFull();
+                } else {
+                    render();
+                }
             } else {
-                render();
+                renderAccessDenied();
             }
+
         } catch (SQLException sqle) {
             throw new JspException(sqle);
         } catch (IOException ie) {
@@ -296,6 +306,65 @@ public class ItemTag extends TagSupport {
         }
 
         return SKIP_BODY;
+    }
+
+    /**
+     * Get access level by user's ip address.
+     * 
+     * 2019/04/12 新增僅校內可下載全文之政策
+     * @author 世澤 mailbox@4ze.tw
+     * @return level: 0: 無法得知ip, 1:校外IP, 2: 140.120之學術網路IP, 3: 10.10之校內網路IP
+     */
+    private int accessLevel() {
+        HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        int level;
+
+        if (ip.startsWith("192.168"))
+            return 4;
+        else if (ip.startsWith("10.10"))
+            return 3;
+        else if (ip.startsWith("140.120"))
+            return 2;
+        else if (ip != null || "unknown".equalsIgnoreCase(ip))
+            return 1;
+        else
+            return 0;
+    }
+
+    /**
+     * Message for access denied item.
+     * 
+     * 2019/04/12 新增僅校內可下載全文之政策
+     * @author 世澤 mailbox@4ze.tw
+     * @throws IOException
+     */
+    private void renderAccessDenied() throws IOException {
+        JspWriter out = pageContext.getOut();
+        out.println("<div class=\"container row\">");
+        out.print("<p>您沒有此文件的讀取權限！取得全文請前往");
+        out.print("<a taget=\"_blank\" href=\"http://www.airitilibrary.com/Search/ArticleSearch?ArticlesViewModel_SearchField=");
+            out.print(URLEncoder.encode(item.getName(), "UTF-8"));
+            out.print("&ArticlesViewModel_TitleKeywordsAbstract=&ArticlesViewModel_Author=&ArticlesViewModel_JournalBookDepartment=&ArticlesViewModel_DOI=&ArticlesViewModel_ArticleArea_Taiwan=false&ArticlesViewModel_ArticleArea_ChinaHongKongMacao=false&ArticlesViewModel_ArticleArea_American=false&ArticlesViewModel_ArticleArea_Other=false&PublicationsViewModel_SearchField=&PublicationsViewModel_PublicationName=&PublicationsViewModel_ISSN=&PublicationsViewModel_PublicationUnitName=&PublicationsViewModel_DOI=&PublicationsViewModel_PublicationArea_Taiwan=false&PublicationsViewModel_PublicationArea_ChinaHongKongMacao=false&PublicationsViewModel_PublicationArea_American=false&PublicationsViewModel_PublicationArea_Other=false\">");
+        out.print("華藝線上圖書館(自動搜尋)</a>");
+        
+        out.println("</p></div>");
     }
 
     /**
