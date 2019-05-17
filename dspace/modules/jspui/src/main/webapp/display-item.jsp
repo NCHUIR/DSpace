@@ -140,6 +140,17 @@ j(document).ready(function() {
 </c:set>
 <% } %>
 
+<%-- For TAIR-Related --%>
+<%
+	DCValue[] titleValue = item.getDC("title", null, Item.ANY);
+	String targetTitle = "";
+	if (titleValue.length != 0)
+	{
+    		targetTitle = titleValue[0].value;
+	}
+	request.setAttribute("targetTitle", targetTitle);
+%>
+
 <dspace:layout title="<%= title %>">
 <%
     if (handle != null)
@@ -289,6 +300,19 @@ j(document).ready(function() {
 <%
         }
 %>
+<!-- TAIR-Related-Article Display-->
+<div>&nbsp;</div>
+<div class="panel panel-info">
+	<div class="panel-heading"><fmt:message key="jsp.display-item.tair-related"/></div>
+	<div class="panel-body">
+        	<div id="related-dspace-content">
+                	<c:import url="http://ir.nctu.edu.tw/related_article/">
+                	<c:param name="targetTitle" value="${targetTitle}" />
+                	</c:import>
+        	</div>
+	</div>
+</div>
+
 
 <% if(pmcEnabled) { %>
 <div>&nbsp;</div>

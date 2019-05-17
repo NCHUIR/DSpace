@@ -49,7 +49,7 @@ public class BitstreamResource {
     @GET
     @Path("/{bitstream_id}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Bitstream getBitstream(@PathParam("bitstream_id") Integer bitstream_id, @QueryParam("expand") String expand) {
+    public Bitstream getBitstream(@PathParam("bitstream_id") Integer bitstream_id, @QueryParam("expand") String expand, @Context HttpServletRequest request) {
         try {
             if(context == null || !context.isValid()) {
                 context = new org.dspace.core.Context();
@@ -60,7 +60,13 @@ public class BitstreamResource {
             org.dspace.content.Bitstream bitstream = org.dspace.content.Bitstream.find(context, bitstream_id);
 
             if(AuthorizeManager.authorizeActionBoolean(context, bitstream, org.dspace.core.Constants.READ)) {
-                return new org.dspace.rest.common.Bitstream(bitstream, expand);
+                // ---
+                int level = accessLevel(request);
+                if (level >= 2)
+                    return new org.dspace.rest.common.Bitstream(bitstream, expand);
+                else
+                    throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+                // ---
             } else {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
@@ -68,6 +74,45 @@ public class BitstreamResource {
             log.error(e.getMessage());
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /**
+     * Get access level by user's ip address.
+     * 
+     * 2019/04/12 新增僅校內可下載全文之政策
+     * @author 世澤 mailbox@4ze.tw
+     * @return level: 0: 無法得知ip, 1:校外IP, 2: 140.120之學術網路IP, 3: 10.10之校內網路IP
+     */
+    private int accessLevel(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_CLIENT_IP");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+        }
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        int level;
+
+        if (ip.startsWith("192.168"))
+            return 4;
+        else if (ip.startsWith("10.10"))
+            return 3;
+        else if (ip.startsWith("140.120"))
+            return 2;
+        else if (ip != null || "unknown".equalsIgnoreCase(ip))
+            return 1;
+        else
+            return 0;
     }
 
     @GET
@@ -86,9 +131,14 @@ public class BitstreamResource {
             if(AuthorizeManager.authorizeActionBoolean(context, bitstream, org.dspace.core.Constants.READ)) {
             	if(writeStatistics){
     				writeStats(bitstream_id, user_ip, user_agent, xforwarderfor, headers, request);
-    			}
-            	
-                return Response.ok(bitstream.retrieve()).type(bitstream.getFormat().getMIMEType()).build();
+                }
+                // ---
+            	int level = accessLevel(request);
+                if (level >= 2)
+                    return Response.ok(bitstream.retrieve()).type(bitstream.getFormat().getMIMEType()).build();
+                else
+                    throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+                // ---
             } else {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }

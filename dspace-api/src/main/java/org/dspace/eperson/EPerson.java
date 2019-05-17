@@ -463,23 +463,24 @@ public class EPerson extends DSpaceObject
 
         switch (sortField)
         {
-        case ID:
-            s = "eperson_id";
-            break;
+            case ID:
+                s = "eperson_id";
+                break;
 
-        case EMAIL:
-            s = "email";
-            break;
+            case EMAIL:
+                s = "email";
+                break;
 
-        case LANGUAGE:
-            s = "language";
-            break;
-        case NETID:
-            s = "netid";
-            break;
+            case LANGUAGE:
+                s = "language";
+                break;
 
-        default:
-            s = "lastname";
+            case NETID:
+                s = "netid";
+                break;
+
+            default:
+                s = "lastname";
         }
 
         // NOTE: The use of 's' in the order by clause can not cause an SQL 

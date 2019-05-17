@@ -62,8 +62,7 @@ public class PasswordServlet extends DSpaceServlet
         // Locate the eperson
         int status = AuthenticationManager.authenticate(context, email, password,
                         null, request);
- 
-       
+        
         if (status == AuthenticationMethod.SUCCESS)
         {
             // Logged in OK.

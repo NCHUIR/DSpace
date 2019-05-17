@@ -29,19 +29,6 @@ public class ItemWithBitstreamVsTotalProcessor implements CollectionHomeProcesso
     /** log4j category */
     private static Logger log = Logger.getLogger(ItemWithBitstreamVsTotalProcessor.class);
 
-    // Configs and settings
-    private static String prefixForNTUR = "全文筆數/總筆數 : "; // default is the chinese prefix
-
-    // Service startup
-    static {
-        String prefixForNTURTmp = ConfigurationManager.getProperty("ItemWithBitstreamVsTotalProcessor.forNTURCrawler.prefix");
-        if (prefixForNTURTmp != null) prefixForNTUR = prefixForNTURTmp;
-    }
-
-    public static String getPrefixForNTUR() {
-        return prefixForNTUR;
-    }
-
     @Override
     public void process(Context context, HttpServletRequest request,
             HttpServletResponse response, Community community)
