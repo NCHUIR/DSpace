@@ -90,8 +90,8 @@
         </fmt:message>
         <dspace:popup page="<%= LocaleSupport.getLocalizedMessage(pageContext, \"help.site-admin\") + \"#authorize\"%>"><fmt:message key="jsp.help"/></dspace:popup>
         </h1>
-            
-<form action="<%= request.getContextPath() %>/dspace-admin/authorize" method="post" <%=(resourceType == 0)?"onSubmit=\"return validate(this)\"":"" %> >
+
+<form action="<%= request.getContextPath() %>/tools/authorize" method="post" <%=(resourceType == 0)?"onSubmit=\"return validate(this)\"":"" %> >
  		<div class="input-group">
  				<span class="col-md-2">
             	<%-- <td>Group:</td> --%>
