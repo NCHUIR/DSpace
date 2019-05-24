@@ -146,7 +146,7 @@ public class ResourcePolicy
     public static ResourcePolicy find(Context context, int id)
             throws SQLException
     {
-        // Fix by 世澤 2019/05/17 錯誤的表格名稱，要全小寫
+        // Fix by 世澤 2019/05/17 錯誤的表格名稱，要全小寫a
         TableRow row = DatabaseManager.find(context, "resourcepolicy", id);
 
         if (row == null)
