@@ -109,7 +109,7 @@
 		},
 		{
 			name:'中興湖文學獎',
-			href:'/handle/11455/83243',
+			href:'/handle/11455/85348',
 			frontCoverSrc:'/image/journals/23.jpg',
 			description:'',
 			category:'文學院'
