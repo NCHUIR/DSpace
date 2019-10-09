@@ -28,3 +28,6 @@ META-INF/
 
 ## Mac noise
 .DS_Store
+
+## Ignore all *.p12 google api key file 
+*.p12

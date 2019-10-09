@@ -563,16 +563,16 @@ public class AuthorizeManager
                 TableRow row = tri.next();
 
                 // first check the cache (FIXME: is this right?)
-                ResourcePolicy cachepolicy = (ResourcePolicy) c.fromCache(
-                        ResourcePolicy.class, row.getIntColumn("policy_id"));
+                /*ResourcePolicy cachepolicy = (ResourcePolicy) c.fromCache(
+                        ResourcePolicy.class, row.getIntColumn("policy_id"));*/
 
-                if (cachepolicy != null)
+                /*if (cachepolicy != null)
                 {
                     policies.add(cachepolicy);
-                } else
-                {
+                } else*/
+                //{
                     policies.add(new ResourcePolicy(c, row));
-                }
+                //}
             }
         } finally
         {

@@ -146,7 +146,8 @@ public class ResourcePolicy
     public static ResourcePolicy find(Context context, int id)
             throws SQLException
     {
-        TableRow row = DatabaseManager.find(context, "ResourcePolicy", id);
+        // Fix by 世澤 2019/05/17 錯誤的表格名稱，要全小寫a
+        TableRow row = DatabaseManager.find(context, "resourcepolicy", id);
 
         if (row == null)
         {
@@ -169,7 +170,7 @@ public class ResourcePolicy
     {
         // FIXME: Check authorisation
         // Create a table row
-        TableRow row = DatabaseManager.create(context, "ResourcePolicy");
+        TableRow row = DatabaseManager.create(context, "resourcepolicy");
 
         return new ResourcePolicy(context, row);
     }
