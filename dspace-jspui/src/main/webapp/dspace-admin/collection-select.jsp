@@ -30,6 +30,7 @@
 <%@ taglib uri="http://www.dspace.org/dspace-tags.tld" prefix="dspace" %>
 
 <%@ page import="org.dspace.content.Collection" %>
+<%@ page import="org.dspace.content.Community" %>
 
 <%
     Collection [] collections =
@@ -52,6 +53,15 @@
                     <select class="form-control" size="12" name="collection_id">
                         <%  for (int i = 0; i < collections.length; i++) { %>
                             <option value="<%= collections[i].getID()%>">
+                                <%
+                                    try {
+                                        Community[] communities = collections[i].getCommunities();
+                                        for (Community community : communities) {
+                                            out.print(community.getName() + "/");
+                                        }
+                                    } catch (Exception ignored)
+                                    {}
+                                %>
                                 <%= collections[i].getMetadata("name")%>
                             </option>
                         <%  } %>
