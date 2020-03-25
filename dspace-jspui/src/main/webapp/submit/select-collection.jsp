@@ -23,6 +23,7 @@
 <%@ page import="org.dspace.submit.AbstractProcessingStep" %>
 <%@ page import="org.dspace.app.webui.util.UIUtil" %>
 <%@ page import="org.dspace.content.Collection" %>
+<%@ page import="org.dspace.content.Community" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt"
     prefix="fmt" %>
@@ -74,14 +75,20 @@
 					</label>
                     <select class="form-control" name="collection" id="tcollection">
                     	<option value="-1"></option>
-<%
-        for (int i = 0; i < collections.length; i++)
-        {
-%>
-                            <option value="<%= collections[i].getID() %>"><%= collections[i].getMetadata("name") %></option>
-<%
-        }
-%>
+						<%  for (int i = 0; i < collections.length; i++) { %>
+						<option value="<%= collections[i].getID()%>">
+							<%
+								try {
+									Community[] communities = collections[i].getCommunities();
+									for (Community community : communities) {
+										out.print(community.getName() + "/");
+									}
+								} catch (Exception ignored)
+								{}
+							%>
+							<%= collections[i].getMetadata("name")%>
+						</option>
+						<%  } %>
                         </select>
 					</div><br/>
             <%-- Hidden fields needed for SubmissionController servlet to know which step is next--%>
