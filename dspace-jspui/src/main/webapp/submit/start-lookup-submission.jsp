@@ -25,6 +25,7 @@
 <%@ page import="java.lang.Boolean" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="org.dspace.content.Community" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core"
     prefix="c" %>
@@ -254,7 +255,18 @@
 				<div class="col-md-6">
 				<select class="form-control submission-file-loader" name="select-collection-file" id="select-collection-file">
 					<% for (Collection c : collections) { %>
-					<option value="<%= c.getID() %>"><%= c.getName() %></option>
+					<option value="<%= c.getID() %>">
+						<%
+							try {
+								Community[] communities = c.getCommunities();
+								for (Community community : communities) {
+									out.print(community.getName() + "/");
+								}
+							} catch (Exception ignored)
+							{}
+						%>
+						<%= c.getName() %>
+					</option>
 					<% }  %>
 				</select>
 				</div>
