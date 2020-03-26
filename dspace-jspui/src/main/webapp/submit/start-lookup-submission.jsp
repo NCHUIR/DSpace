@@ -296,7 +296,16 @@
 			<select class="form-control" id="select-collection-manual">
 				<option value="-1"><fmt:message key="jsp.submit.start-lookup-submission.select.collection.defaultoption"/></option>
 				<% for (Collection c : collections) { %>
-				<option value="<%= c.getID() %>"><%= c.getName() %></option>
+				<%
+					try {
+						Community[] communities = c.getCommunities();
+						for (Community community : communities) {
+							out.print(community.getName() + "/");
+						}
+					} catch (Exception ignored)
+					{}
+				%>
+				<%= c.getName() %>
 				<% }  %>
 			</select>
 			</div>
@@ -321,7 +330,16 @@
 			<div id="select-collection-div">
 				<select class="form-control" id="select-collection">
 					<% for (Collection c : collections) { %>
-					<option value="<%= c.getID() %>"><%= c.getName() %></option>
+					<%
+						try {
+							Community[] communities = c.getCommunities();
+							for (Community community : communities) {
+								out.print(community.getName() + "/");
+							}
+						} catch (Exception ignored)
+						{}
+					%>
+					<%= c.getName() %>
 					<% }  %>
 				</select>
 			</div>
