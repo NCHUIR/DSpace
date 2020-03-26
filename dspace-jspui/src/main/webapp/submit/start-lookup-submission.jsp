@@ -298,15 +298,18 @@
 				<% for (Collection c : collections) { %>
 				<option value="<%= c.getID() %>">
 					<%
+						out.print(c.getName());
 						try {
 							Community[] communities = c.getCommunities();
+							out.print(" (");
 							for (Community community : communities) {
 								out.print(community.getName() + "/");
 							}
+							out.print(")");
 						} catch (Exception ignored)
 						{}
 					%>
-					<%= c.getName() %>
+
 				</option>
 				<% }  %>
 			</select>
