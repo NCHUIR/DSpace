@@ -161,7 +161,11 @@
 		<dependency>
 			<groupId>it.4science.dspace</groupId>
 			<artifactId>addon-commons-api</artifactId>
-		</dependency>		
+		</dependency>
+        <dependency>
+            <groupId>org.dspace.modules</groupId>
+            <artifactId>additions</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
