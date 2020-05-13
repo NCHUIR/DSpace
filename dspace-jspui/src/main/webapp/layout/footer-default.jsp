@@ -54,31 +54,46 @@
 <br/>
 </main>
             <%-- Page footer --%>
-            <footer class="navbar navbar-inverse navbar-bottom navbar-square">
+            <footer class="navbar navbar-inverse navbar-bottom navbar-square" style="margin-bottom: 0 !important;>
              <div class="container">
 	             <div class="row">
-					<div class="col-md-3 col-sm-6">
-	             		<div class="panel panel-default">
-	             			<div class="panel-heading">
-	             				<h6 class="panel-title"><fmt:message key="jsp.layout.footer-default.explore"/></h6>
-	             			</div>
-	             			<div class="panel-body">
-	             			<ul>
-	    <% 	if(showCommList){ %>
-           <li><a href="<%= request.getContextPath() %>/community-list"><fmt:message key="jsp.layout.navbar-default.communities-collections"/></a></li>
-        <%	} 
-            for (String mlink : mlinks) { 
-         %>
-           <c:set var="fmtkey">
-           jsp.layout.navbar-default.cris.<%= mlink.trim() %>
-           </c:set>
-           <li><a href="<%= request.getContextPath() %>/cris/explore/<%= mlink.trim() %>"><fmt:message key="${fmtkey}"/></a></li>
-           <% } %>
-							</ul>
-	             			</div>
-	             		</div>
-	             	</div>
-	             	<div class="col-md-9 col-sm-6">
+	<div class="col-md-3 col-sm-3">
+	<div class="panel panel-default">
+	<div class="panel-body">
+	<a href="http://etds.lib.nchu.edu.tw/" target="_blank">興大電子學位論文服務</a><br>
+	<a href="http://ndltd.ncl.edu.tw/" target="_blank">臺灣碩博士論文系統</a><br>
+	<a href="http://www.grb.gov.tw/" target="_blank">政府研究資訊系統</a><br>
+	<a href="http://twpat.tipo.gov.tw/" target="_blank">中華民國專利資訊檢索系統</a><br>
+	<a href="http://www.ndltd.org/" target="_blank">NDLTD</a>
+	</div>
+	</div>
+	</div>
+
+	<div class="col-md-3 col-sm-3">
+	<div class="panel panel-default">
+	<div class="panel-body">
+	<a href="<%=request.getContextPath()%>/copyright.jsp">著作權相關文件</a><br>
+	<a href="http://tair.org.tw/" target="_blank">臺灣學術機構典藏</a><br>
+	<a href="http://ir.org.tw/" target="_blank">機構典藏計畫網站</a><br>
+	<a href="http://www.opendoar.org/" target="_blank">OpenDOAR</a><br>
+	<a href="http://roar.eprints.org/" target="_blank">ROAR</a><br>
+	<a href="http://www.oclc.org/oaister/" target="_blank">OAIster</a><br>
+	<a href="http://repositories.webometrics.info/" target="_blank">RWWR</a><br>
+	<a href="http://www.sherpa.ac.uk/index.html" target="_blank">SHERPA</a>
+	</ul>
+	</div>
+	</div>
+	</div>
+	<div class="col-md-3 col-sm-3">
+	<div class="panel panel-default">
+	<div class="panel-body">
+	<a href="http://www.nchu.edu.tw/" target="_blank">興大首頁</a><br>
+	<a href="http://www.lib.nchu.edu.tw/" target="_blank">興大圖書館</a><br>
+	<a href="mailto:nchuir@gmail.com" target="_blank">聯絡管理員</a>
+	</div>
+	</div>
+	</div>
+	             	<div class="col-md-3 col-sm-3">
 	             		<%= footerNews %>
 	             	</div>
 	            </div> 

@@ -109,7 +109,7 @@
         Community[] comms = (Community[]) subcommunityMap.get(c.getID());
 
         int index=0, flag=0;
-        if ( (cols != null && cols.length > 0) || (comms != null && comms.length > 0)) out.println("<div class=\"table-responsive\"><table class=\"table table-bordered\"><tbody>");
+        if ( (cols != null && cols.length > 0) || (comms != null && comms.length > 0)) out.println("<div><table class=\"table table-bordered\"><tbody>");
         // Get the collections in this community
         if (cols != null && cols.length > 0)
         {
@@ -119,7 +119,6 @@
                 if(index%3==0 && flag!=0) out.println("</tr>");
                 if(index%3==0) out.println("<tr>");
                 out.println("<td>");
-                out.println("<li>");
                 Bitstream logoCol = cols[j].getLogo();
                 if (showLogos && logoCol != null)
                 {
@@ -132,7 +131,6 @@
                 {
                     out.println(" [" + ic.getCount(cols[j]) + "]");
                 }
-                out.println("</li>");
                 out.println("</td>");
                 index++;
                 flag=1;
