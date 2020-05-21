@@ -1103,19 +1103,10 @@ public class GoogleMetadata
         if (null != fields && !fields.isEmpty())
         {
 
-            StringBuilder fieldMetadata = new StringBuilder();
-            int count = 0;
-
             for (DCValue field : fields)
             {
-                fieldMetadata.append(field.value);
-                if (count < fields.size() - 1)
-                {
-                    fieldMetadata.append(delim + " ");
-                    count++;
-                }
+                metadataMappings.put(FIELD, field.value);
             }
-            metadataMappings.put(FIELD, fieldMetadata.toString());
         }
     }
 
