@@ -661,7 +661,7 @@ public class GoogleMetadata
         addSingleField(TITLE);
 
         // AUTHORS (multi)
-        addAggregateValues(AUTHORS, ";");
+        addMultipleValues(AUTHORS);
 
         // DATE
         addSingleField(DATE);
@@ -1097,6 +1097,36 @@ public class GoogleMetadata
     private void addAggregateValues(String FIELD, String delim)
     {
 
+        String authorConfig = configuredFields.get(FIELD);
+        ArrayList<DCValue> fields = resolveMetadataFields(authorConfig);
+
+        if (null != fields && !fields.isEmpty())
+        {
+
+            StringBuilder fieldMetadata = new StringBuilder();
+            int count = 0;
+
+            for (DCValue field : fields)
+            {
+                fieldMetadata.append(field.value);
+                if (count < fields.size() - 1)
+                {
+                    fieldMetadata.append(delim + " ");
+                    count++;
+                }
+            }
+            metadataMappings.put(FIELD, fieldMetadata.toString());
+        }
+    }
+
+
+    /**
+     * If metadata field contains multiple values, then add each value to the
+     * map separately
+     *
+     * @param FIELD
+     */
+    protected void addMultipleValues(String FIELD) {
         String authorConfig = configuredFields.get(FIELD);
         ArrayList<DCValue> fields = resolveMetadataFields(authorConfig);
 
