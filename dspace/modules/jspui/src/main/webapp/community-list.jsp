@@ -99,8 +99,16 @@
             out.println(c.getMetadata("short_description"));
             out.println(" | ");
         }
-        out.println(LocaleSupport.getLocalizedMessage(pageContext, "jsp.ItemWithBitstreamVsTotalCounter.prefix"));
-        out.println(ItemWithBitstreamVsTotalCounter.getCommunityCount(c).toString());
+        String csCount = null;
+        try {
+            csCount = ItemWithBitstreamVsTotalCounter.getCommunityCount(c).toString();
+        } catch (Exception e) {
+            out.println("Indexing...");
+        }
+        if (csCount != null) {
+            out.println(LocaleSupport.getLocalizedMessage(pageContext, "jsp.ItemWithBitstreamVsTotalCounter.prefix"));
+            out.println(csCount);
+        }
         out.println("<br></div>");
         out.println( "</div>");
 
@@ -126,7 +134,13 @@
                             + cols[j].getHandle() + "\"><img class=\"media-object img-responsive\" src=\"" +
                             request.getContextPath() + "/retrieve/" + logoCol.getID() + "\" alt=\"collection logo\"></a>");
                 }
-                out.println("<a href=\"" + request.getContextPath() + "/handle/" + cols[j].getHandle() + "\">" + cols[j].getMetadata("name") + " [" + ItemWithBitstreamVsTotalCounter.getCollectionCount(cols[j]).toString() +"]</a>");
+                String cCsCount = "Indexing...";
+                try {
+                    cCsCount = ItemWithBitstreamVsTotalCounter.getCollectionCount(cols[j]).toString();
+                } catch (Exception e) {
+                    // ignore
+                }
+                out.println("<a href=\"" + request.getContextPath() + "/handle/" + cols[j].getHandle() + "\">" + cols[j].getMetadata("name") + " [" + cCsCount +"]</a>");
                 if(ConfigurationManager.getBooleanProperty("webui.strengths.show"))
                 {
                     out.println(" [" + ic.getCount(cols[j]) + "]");
