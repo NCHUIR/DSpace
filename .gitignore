@@ -26,7 +26,6 @@ META-INF/
 
 ## Ignore all *.properties file in root folder, EXCEPT build.properties (the default)
 /*.properties
-!/build.properties
 
 ##Mac noise
 .DS_Store
