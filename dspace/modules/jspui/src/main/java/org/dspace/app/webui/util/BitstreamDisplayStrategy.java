@@ -72,9 +72,10 @@ public class BitstreamDisplayStrategy implements IDisplayMetadataValueStrategy
             Bitstream primaryBitstream = dao.getPrimaryBitstream(itemID, "ORIGINAL");
 
             if (primaryBitstream == null)
-            {
-                return "-";
-            }
+                primaryBitstream = dao.getFirstBitstream(itemID, "ORIGINAL");
+
+            if (primaryBitstream == null) return "-";
+
             StringBuilder thumbFrag = new StringBuilder();
 
             String link = hrq.getContextPath() + "/bitstream/" + handle + "/" + primaryBitstream.getSequenceID() + "/" +
