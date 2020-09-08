@@ -236,17 +236,6 @@
 </c:set>
 <% } %>
 
-<%-- For TAIR-Related --%>
-<%
-	List<String> titleValue = item.getMetadataValue("title");
-	String targetTitle = "";
-	if (titleValue.size() != 0)
-	{
-		targetTitle = titleValue.get(0);
-	}
-	request.setAttribute("targetTitle", targetTitle);
-%>
-
 <dspace:layout title="<%= title %>">
 	<%
 		if (handle != null)
@@ -469,7 +458,7 @@
 				<div class="panel-body">
 					<div id="related-dspace-content">
 						<c:import url="http://ir.nctu.edu.tw/related_article/">
-							<c:param name="targetTitle" value="${targetTitle}" />
+							<c:param name="targetTitle" value="${title}" />
 						</c:import>
 					</div>
 				</div>
