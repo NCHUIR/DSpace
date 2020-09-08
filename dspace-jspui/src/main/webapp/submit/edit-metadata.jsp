@@ -250,20 +250,60 @@
             {
                 if (inputBlock != null)
                     sb.insert(0, inputBlock);
-                sb.append("<span id=\"").append(fieldInput).append("_indicator\" style=\"display: none;\">")
-                  .append("<img src=\"").append(contextPath).append("/image/authority/load-indicator.gif\" alt=\"Loading...\"/>")
-                  .append("</span><div id=\"").append(fieldInput).append("_autocomplete\" class=\"autocomplete\" style=\"display: none;\"> </div>");
+                
+                Boolean onlyLocal = ConfigurationManager.getBooleanProperty("choices.extralookup." + fieldName);
+                if(onlyLocal)
+                {
+                    sb.append("<span id=\"").append(fieldInput).append("_indicator\" style=\"display: none;\">")
+                      .append("<img src=\"").append(contextPath).append("/image/authority/load-indicator.gif\" alt=\"Loading...\"/>")
+                      .append("</span><div id=\"").append(fieldInput).append("_autocomplete\" class=\"autocomplete\" style=\"display: none;\"> </div>");
 
-                sb.append("<script type=\"text/javascript\">")
-                  .append("var gigo = DSpaceSetupAutocomplete('edit_metadata',")
-                  .append("{ metadataField: '").append(fieldName).append("', isClosed: '").append(required?"true":"false").append("', inputName: '")
-                  .append(fieldInput).append("', authorityName: '").append(authorityName).append("', containerID: '")
-                  .append(fieldInput).append("_autocomplete', indicatorID: '").append(fieldInput).append("_indicator', ")
-                  .append("contextPath: '").append(contextPath)
-                  .append("', confidenceName: '").append(confidenceName)
-                  .append("', confidenceIndicatorID: '").append(confIndID)
-                  .append("', collection: ").append(String.valueOf(collectionID))
-                  .append(" }); </script>");
+                    sb.append("<script type=\"text/javascript\">")
+                      .append("var gigo = DSpaceSetupAutocomplete('edit_metadata',")
+                      .append("{ metadataField: '").append(fieldName).append("', isClosed: '").append(required?"true":"false").append("', inputName: '")
+                      .append(fieldInput).append("', authorityName: '").append(authorityName).append("', containerID: '")
+                      .append(fieldInput).append("_autocomplete', indicatorID: '").append(fieldInput).append("_indicator', ")
+                      .append("contextPath: '").append(contextPath)
+                      .append("', confidenceName: '").append(confidenceName)
+                      .append("', confidenceIndicatorID: '").append(confIndID)
+                      .append("', collection: ").append(String.valueOf(collectionID))
+                      .append(", onlyLocal: true")
+                      .append(" }); </script>");
+                	
+                	sb.append("&nbsp<button class=\"btn btn-default\" name=\"").append(fieldInput).append("_lookup\" ")
+                	.append("onclick=\"javascript: return DSpaceChoiceLookupOnlyLocal(false, '")
+                	.append(contextPath).append("/tools/lookup.jsp','")
+                	.append(fieldName).append("','edit_metadata','")
+                	.append(fieldInput).append("','").append(authorityName).append("','")
+                	.append(confIndID).append("',")
+                	.append(String.valueOf(collectionID)).append(",")
+                	.append(String.valueOf(isName)).append(",false);\"")
+                	.append(" title=\"")
+                	.append(LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.lookup"))
+                	.append("\"><span class=\"glyphicon ");
+                	sb.append("glyphicon-zoom-in");
+                    sb.append("\"></span></button>");
+                }
+                else {
+
+                    sb.append("<span id=\"").append(fieldInput).append("_indicator\" style=\"display: none;\">")
+                      .append("<img src=\"").append(contextPath).append("/image/authority/load-indicator.gif\" alt=\"Loading...\"/>")
+                      .append("</span><div id=\"").append(fieldInput).append("_autocomplete\" class=\"autocomplete\" style=\"display: none;\"> </div>");
+
+                    sb.append("<script type=\"text/javascript\">")
+                      .append("var gigo = DSpaceSetupAutocomplete('edit_metadata',")
+                      .append("{ metadataField: '").append(fieldName).append("', isClosed: '").append(required?"true":"false").append("', inputName: '")
+                      .append(fieldInput).append("', authorityName: '").append(authorityName).append("', containerID: '")
+                      .append(fieldInput).append("_autocomplete', indicatorID: '").append(fieldInput).append("_indicator', ")
+                      .append("contextPath: '").append(contextPath)
+                      .append("', confidenceName: '").append(confidenceName)
+                      .append("', confidenceIndicatorID: '").append(confIndID)
+                      .append("', collection: ").append(String.valueOf(collectionID))
+                      .append(" }); </script>");
+                }
+
+                
+
             }
 
             // put up a SELECT element containing all choices
@@ -300,17 +340,50 @@
             {
                 if (inputBlock != null)
                     sb.insert(0, inputBlock);
-                sb.append("<button class=\"btn btn-default\" name=\"").append(fieldInput).append("_lookup\" ")
-                  .append("onclick=\"javascript: return DSpaceChoiceLookup('")
-                  .append(contextPath).append("/tools/lookup.jsp','")
-                  .append(fieldName).append("','edit_metadata','")
-                  .append(fieldInput).append("','").append(authorityName).append("','")
-                  .append(confIndID).append("',")
-                  .append(String.valueOf(collectionID)).append(",")
-                  .append(String.valueOf(isName)).append(",false);\"")
-                  .append(" title=\"")
-                  .append(LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.lookup"))
-                  .append("\"><span class=\"glyphicon glyphicon-search\"></span></button>");
+                
+                Boolean onlyLocal = ConfigurationManager.getBooleanProperty("choices.extralookup." + fieldName);
+                if(onlyLocal)
+                {
+                	sb.append("<button class=\"btn btn-default\" name=\"").append(fieldInput).append("_lookup\" ")
+          			.append("onclick=\"javascript: return DSpaceChoiceLookupOnlyLocal(true, '")
+          			.append(contextPath).append("/tools/lookup.jsp','")
+          			.append(fieldName).append("','edit_metadata','")
+          			.append(fieldInput).append("','").append(authorityName).append("','")
+          			.append(confIndID).append("',")
+          			.append(String.valueOf(collectionID)).append(",")
+          			.append(String.valueOf(isName)).append(",false);\"")
+          			.append(" title=\"")
+          			.append(LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.lookup.local"))
+          			.append("\"><span class=\"glyphicon glyphicon-search\"></span></button>");
+                	
+                	sb.append("&nbsp<button class=\"btn btn-default\" name=\"").append(fieldInput).append("_lookup\" ")
+                	.append("onclick=\"javascript: return DSpaceChoiceLookupOnlyLocal(false, '")
+                	.append(contextPath).append("/tools/lookup.jsp','")
+                	.append(fieldName).append("','edit_metadata','")
+                	.append(fieldInput).append("','").append(authorityName).append("','")
+                	.append(confIndID).append("',")
+                	.append(String.valueOf(collectionID)).append(",")
+                	.append(String.valueOf(isName)).append(",false);\"")
+                	.append(" title=\"")
+                	.append(LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.lookup"))
+                	.append("\"><span class=\"glyphicon ");
+                	sb.append("glyphicon-zoom-in");
+                }
+                else {
+	                sb.append("&nbsp<button class=\"btn btn-default\" name=\"").append(fieldInput).append("_lookup\" ")
+	                	.append("onclick=\"javascript: return DSpaceChoiceLookup('")
+	                	.append(contextPath).append("/tools/lookup.jsp','")
+	                	.append(fieldName).append("','edit_metadata','")
+	                	.append(fieldInput).append("','").append(authorityName).append("','")
+	                	.append(confIndID).append("',")
+	                	.append(String.valueOf(collectionID)).append(",")
+	                	.append(String.valueOf(isName)).append(",false);\"")
+	                	.append(" title=\"")
+	                	.append(LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.lookup"))
+	                	.append("\"><span class=\"glyphicon ");
+	                sb.append("glyphicon-search");
+                }
+                sb.append("\"></span></button>");
             }
             
         }
@@ -539,8 +612,8 @@
         else
            dateIssued = new org.dspace.content.DCDate("");
    
-        sb.append("<div class=\"row col-md-12\"><div class=\"input-group col-md-10\"><div class=\"row\">")
-			.append("<span class=\"input-group col-md-6\"><span class=\"input-group-addon\">")
+         sb.append("<div class=\"row col-md-12\"><div class=\"col-md-10\"><div class=\"row\">")
+            .append("<div class=\"col-md-6\"><span class=\"input-group\"><span class=\"input-group-addon\">")
         	.append(LocaleSupport.getLocalizedMessage(pageContext, "jsp.submit.edit-metadata.month"))
            .append("</span><select class=\"form-control\" name=\"")
            .append(fieldName)
@@ -575,8 +648,8 @@
              .append("</option>");
         }
    
-        sb.append("</select></span>")
-	            .append("<span class=\"input-group col-md-2\"><span class=\"input-group-addon\">")
+         sb.append("</select></span></div>")
+               .append("<div class=\"col-md-2\"><span class=\"input-group\"><span class=\"input-group-addon\">")
                .append(LocaleSupport.getLocalizedMessage(pageContext, "jsp.submit.edit-metadata.day"))
                .append("</span><input class=\"form-control\" type=\"text\" name=\"")
            .append(fieldName)
@@ -590,7 +663,7 @@
         sb.append("\" size=\"2\" maxlength=\"2\" value=\"")
            .append((dateIssued.getDay() > 0 ?
                     String.valueOf(dateIssued.getDay()) : "" ))
-               .append("\"/></span><span class=\"input-group col-md-4\"><span class=\"input-group-addon\">")
+               .append("\"/></span></div><div class=\"col-md-4\"><span class=\"input-group\"><span class=\"input-group-addon\">")
                .append(LocaleSupport.getLocalizedMessage(pageContext, "jsp.submit.edit-metadata.year"))
                .append("</span><input class=\"form-control\" type=\"text\" name=\"")
            .append(fieldName)
@@ -604,7 +677,7 @@
         sb.append("\" size=\"4\" maxlength=\"4\" value=\"")
            .append((dateIssued.getYear() > 0 ?
                 String.valueOf(dateIssued.getYear()) : "" ))
-           .append("\"/></span></div></div>\n");
+           .append("\"/></span></div></div></div>\n");
    
         if (!hasParent && repeatable && !readonly && count < defaults.length)
         {
@@ -756,7 +829,7 @@
     		String qualifier, boolean repeatable, boolean required, boolean readonly, int fieldCountIncr, PageContext pageContext,String vocabulary,
     		boolean closedVocabulary,int collectionID,boolean hasParent){
         StringBuffer sb = new StringBuffer();
-        
+        boolean doubleLookupEnabled = ConfigurationManager.getBooleanProperty("choices.extralookup."+fieldName);
         String auth,val;
         int conf=0;
     	if (count < defaults.length)
@@ -775,7 +848,11 @@
         sb.append("<div class=\"col-md-10\">");
         if (authorityType != null)
         {
-       	 sb.append("<div class=\"col-md-10\">");
+        	if(doubleLookupEnabled){
+       	 		sb.append("<div class=\"col-md-9\">");
+        	}else{
+        		sb.append("<div class=\"col-md-10\">");
+        	}        
         }
         sb.append("<textarea class=\"form-control\" name=\"").append(fieldNameIdx)
           .append("\" rows=\"4\" cols=\"45\" id=\"")
@@ -787,7 +864,11 @@
           .append(doControlledVocabulary(fieldNameIdx, pageContext, vocabulary, readonly));
         if (authorityType != null)
         {
-       	 sb.append("</div><div class=\"col-md-2\">");
+        	if(doubleLookupEnabled){
+       	 		sb.append("</div><div class=\"col-md-3\">");
+        	}else{
+        		sb.append("</div><div class=\"col-md-2\">");
+        	}
 	         sb.append(doAuthority(pageContext, fieldName, count, fieldCount, fieldName,
                            auth, conf, false, repeatable,
                            defaults, null, collectionID));
@@ -866,6 +947,7 @@
     		int collectionID,boolean hasParent){
 
     	StringBuffer sb = new StringBuffer();
+    	boolean doubleLookupEnabled = ConfigurationManager.getBooleanProperty("choices.extralookup."+fieldName);
     	String val,auth;
     	int conf =0;
     	
@@ -888,7 +970,11 @@
         sb.append("<div class=\"col-md-10\">");
         if (authorityType != null)
         {
-     	   sb.append("<div class=\"row col-md-10\">");
+        	if(doubleLookupEnabled){
+       	 		sb.append("<div class=\"col-md-9\">");
+        	}else{
+        		sb.append("<div class=\"col-md-10\">");
+        	}        
         }
         
         sb.append("<div class=\"row col-md-4\">");
@@ -903,7 +989,11 @@
         
         if (authorityType != null)
         {
-     	   sb.append("<div class=\"col-md-2\">");
+        	if(doubleLookupEnabled){
+       	 		sb.append("</div><div class=\"col-md-3\">");
+        	}else{
+        		sb.append("</div><div class=\"col-md-2\">");
+        	}
 	           sb.append(doAuthority(pageContext, fieldName, count,  fieldCount,
                            fieldName, auth, conf, false, repeatable,
                            defaults, null, collectionID));
@@ -976,6 +1066,7 @@
     		boolean repeatable, boolean required, boolean readonly, int fieldCountIncr, PageContext pageContext,String vocabulary, boolean closedVocabulary,int collectionID,boolean hasParent){
 
     	StringBuffer sb = new StringBuffer();
+    	boolean doubleLookupEnabled = ConfigurationManager.getBooleanProperty("choices.extralookup."+fieldName);
         String val, auth;
         int conf= 0;
 
@@ -998,7 +1089,14 @@
         sb.append("<div class=\"col-md-10\">");
         if (authorityType != null)
         {
-     	   sb.append("<div class=\"row col-md-10\">");
+            if (authorityType != null)
+            {
+            	if(doubleLookupEnabled){
+           	 		sb.append("<div class=\"col-md-9\">");
+            	}else{
+            		sb.append("<div class=\"col-md-10\">");
+            	}        
+            }
         }
         sb.append("<input class=\"form-control\" type=\"text\" name=\"")
           .append(fieldNameIdx)
@@ -1012,7 +1110,15 @@
         
         if (authorityType != null)
         {
-     	   sb.append("<div class=\"col-md-2\">");
+            if (authorityType != null)
+            {
+            	if(doubleLookupEnabled){
+           	 		sb.append("<div class=\"col-md-3\">");
+            	}else{
+            		sb.append("<div class=\"col-md-2\">");
+            	}        
+            }
+
 	           sb.append(doAuthority(pageContext, fieldName, count,  fieldCount,
                            fieldName, auth, conf, false, repeatable,
                            defaults, null, collectionID));
@@ -1246,11 +1352,11 @@
         	      .append("<span class=\"input-group row col-md-10\">");
           	}
          	else {
-         		sb.append("<div class=\"row col-md-12\"><span class=\"input-group col-md-10\">");
+         		sb.append("<div class=\"row col-md-12\">");
           	}
           	
           	// do the dropdown box
-          	sb.append("<span class=\"input-group-addon\"><select name=\"")
+          	sb.append("<div class=\"col-md-10\"><span class=\"input-group\"><span class=\"input-group-addon\"><select name=\"")
               .append(fieldName)
               .append("_qualifier");
           	if (repeatable && j!= fieldCount-1)
@@ -1284,7 +1390,7 @@
             }
             sb.append("\" size=\"34\" value=\"")
               .append(currentVal.replaceAll("\"", "&quot;"))
-              .append("\"/></span>\n");
+              .append("\"/></span></span></div>\n");
             
             if (authorityType != null)
             {

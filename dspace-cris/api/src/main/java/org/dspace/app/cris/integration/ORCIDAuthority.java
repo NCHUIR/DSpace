@@ -20,6 +20,7 @@ import org.dspace.authority.orcid.OrcidAuthorityValue;
 import org.dspace.authority.orcid.OrcidService;
 import org.dspace.content.authority.Choice;
 import org.dspace.content.authority.Choices;
+import org.dspace.core.ConfigurationManager;
 import org.dspace.utils.DSpace;
 
 public class ORCIDAuthority extends RPAuthority {
@@ -37,33 +38,109 @@ public class ORCIDAuthority extends RPAuthority {
 		Choices choices = super.getMatches(field, query, collection, start, limit, locale);		
 		return new Choices(addExternalResults(field, query, choices, start, limit<=0?DEFAULT_MAX_ROWS:limit), choices.start, choices.total, choices.confidence, choices.more);
 	}
-
+	
+	@Override
+	public Choices getMatches(String field, String query, int collection, int start, int limit, String locale, boolean extra) {
+		if(extra)
+		{
+			return getMatches(field, query, collection, start, limit, locale);
+		} else {
+			return super.getMatches(field, query, collection, start, limit, locale);
+		}
+	} 
+	
 	protected Choice[] addExternalResults(String field, String text, Choices choices, int start, int max) {
 		if (source != null) {
 			try {
 				List<Choice> results = new ArrayList<Choice>();
 				List<AuthorityValue> values = source.queryOrcidBioByFamilyNameAndGivenName(text, start, max);
-				// adding choices loop
-				int added = 0;
-				for (AuthorityValue val : values) {
-					if (added < max) {						
-						Map<String, String> extras = ((OrcidAuthorityValue)val).choiceSelectMap();
-						extras.put("insolr", "false");
-						extras.put("link", getLink((OrcidAuthorityValue)val));
-						String serviceId = ((OrcidAuthorityValue)val).getServiceId();
-						String inst = ((OrcidAuthorityValue)val).getInstitution();
-                        StringBuffer sb = new StringBuffer(val.getValue());
-                        if (StringUtils.isNotBlank(inst))
-                        {
-                            sb.append(" (").append(inst).append(")");
-                        }
-                        sb.append(" - ").append(serviceId);
-						extras.putAll(buildExtra(serviceId));
-						results.add(new Choice(val.generateString(), sb.toString(), val.getValue(), extras));
-						added++;
+				
+				int maxThreads = ConfigurationManager.getIntProperty("orcid.addexternalresults.thread.max", 5);
+	        	
+	        	final Integer maxItems;
+				Double size = (double) values.size();
+				Double res = Math.ceil(size / maxThreads);
+				maxItems = res.intValue();
+	        	
+	        	List<Thread> threads = new ArrayList<Thread>();
+	        	final Map<Integer, List<Choice>> threadResultsMap = new HashMap<>();
+	        	
+	        	for (int i = 0; i < maxThreads; i++) {
+					
+					final List<AuthorityValue> valuesToWork = new ArrayList<>();
+					
+					size = (double) values.size();
+					for (int j = 0; j < maxItems; j++) {
+						
+						if (values.size() <= 0) {
+							break;
+						}
+						if ((j == (maxItems - 1)) && ((size / (maxThreads - i)) <= (maxItems - 1))) {
+							break;
+						}
+						valuesToWork.add(values.remove(0));
+					}
+					
+					final Integer threadNumber = i;
+					threads.add(new Thread() {
+						
+						int num = threadNumber;
+						List<AuthorityValue> values = valuesToWork;
+						
+						@Override
+						public void run()
+						{
+							threadResultsMap.put(num, new ArrayList<Choice>());
+							for (AuthorityValue value : values) {
+								
+									Map<String, String> extras = ((OrcidAuthorityValue)value).choiceSelectMap();
+									extras.put("insolr", "false");
+									extras.put("link", getLink((OrcidAuthorityValue)value));
+									String serviceId = ((OrcidAuthorityValue)value).getServiceId();
+									String inst = ((OrcidAuthorityValue)value).getInstitution();
+			                        StringBuffer sb = new StringBuffer(value.getValue());
+			                        if (StringUtils.isNotBlank(inst))
+			                        {
+			                            sb.append(" (").append(inst).append(")");
+			                        }
+			                        sb.append(" - ").append(serviceId);
+									extras.putAll(buildExtra(serviceId));
+									threadResultsMap.get(num).add(new Choice(value.generateString(), sb.toString(), value.getValue(), extras));
+									Thread.yield();
+							}
+						}
+					});
+				}
+	        	
+	        	List<Thread> threadsStarted = new ArrayList<Thread>();
+	        	
+	        	while (!threads.isEmpty() || !threadsStarted.isEmpty()) {
+					if (!threads.isEmpty() && threadsStarted.size() < maxThreads) {
+						Thread t = threads.remove(0);
+						t.start();
+						threadsStarted.add(t);
+					}else {
+						Thread t = threadsStarted.remove(0);
+						try {
+							t.join();
+						} catch (InterruptedException e) {
+							log.error(e.getMessage(), e);			
+						}
 					}
 				}
-				return (Choice[])ArrayUtils.addAll(choices.values, results.toArray(new Choice[results.size()]));
+	        	
+	        	
+	        	for (int i = 0; i < threadResultsMap.size(); i++) {
+	        		if(!threadResultsMap.get(i).isEmpty())
+					{
+						for (Choice choiceValue : threadResultsMap.get(i)) {
+							results.add(choiceValue);
+						}
+					}
+				}
+				
+	        	return (Choice[])ArrayUtils.addAll(choices.values, results.toArray(new Choice[results.size()]));
+				
 			} catch (Exception e) {
 				log.error(e.getMessage(), e);
 			}

@@ -18,7 +18,7 @@ public class ExcelBulkFieldValue implements IBulkChangeFieldValue {
 	private String value;
 	private String visibility;
 
-	public static String REGEX_VALUE_AND_VISIBILITY = "\\[.*visibility=([\\w\\p{P}]+).*\\](.*)";
+	public static String REGEX_VALUE_AND_VISIBILITY = "\\[.*visibility=([\\w]+)[^\\]]*\\](.*)";
 	private static Pattern pattern = Pattern.compile(REGEX_VALUE_AND_VISIBILITY);
 
 	public ExcelBulkFieldValue(Cell element, int position) {

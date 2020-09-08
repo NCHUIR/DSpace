@@ -1012,7 +1012,10 @@ public class ApplicationService extends ExtendedTabService
 			// remove from the cache all the depending objects
 			if (dependencies != null) {
 				for (String uuidDep : dependencies) {
-					clearCacheByUUID(uuidDep);
+					// prevent a stack overflow if the item depends on itself
+					if (!uuidDep.equals(myUuid)) {
+						clearCacheByUUID(uuidDep);
+					}
 				}
 			}
 			cacheDependencies.remove(myUuid);

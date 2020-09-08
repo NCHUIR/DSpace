@@ -22,14 +22,14 @@ import org.apache.solr.common.SolrInputDocument;
 import org.dspace.authority.AuthorityValue;
 import org.dspace.authority.AuthorityValueGenerator;
 import org.dspace.authority.PersonAuthorityValue;
-import org.orcid.jaxb.model.common_v2.ExternalId;
-import org.orcid.jaxb.model.record_v2.AddressType;
-import org.orcid.jaxb.model.record_v2.Addresses;
-import org.orcid.jaxb.model.record_v2.KeywordType;
-import org.orcid.jaxb.model.record_v2.NameType;
-import org.orcid.jaxb.model.record_v2.OtherNameType;
-import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.jaxb.model.record_v2.ResearcherUrlType;
+import org.orcid.jaxb.model.common_v3.ExternalId;
+import org.orcid.jaxb.model.record_v3.AddressType;
+import org.orcid.jaxb.model.record_v3.Addresses;
+import org.orcid.jaxb.model.record_v3.KeywordType;
+import org.orcid.jaxb.model.record_v3.NameType;
+import org.orcid.jaxb.model.record_v3.OtherNameType;
+import org.orcid.jaxb.model.record_v3.Record;
+import org.orcid.jaxb.model.record_v3.ResearcherUrlType;
 
 /**
  *

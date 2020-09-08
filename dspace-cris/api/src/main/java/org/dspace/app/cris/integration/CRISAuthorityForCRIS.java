@@ -103,6 +103,11 @@ public abstract class CRISAuthorityForCRIS<T extends ACrisObject> implements Cho
      * @return a Choices of RPs where a name form match the query string
      */
     public Choices getMatches(String field, String query, int collection,
+            int start, int limit, String locale, boolean extra) {
+    	return getMatches(field, query, collection, start, limit, locale);
+    }
+    
+    public Choices getMatches(String field, String query, int collection,
             int start, int limit, String locale)
     {
         try

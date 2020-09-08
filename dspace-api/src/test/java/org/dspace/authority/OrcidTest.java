@@ -22,13 +22,13 @@ import org.dspace.content.crosswalk.CrosswalkException;
 import org.dspace.content.crosswalk.StreamDisseminationCrosswalk;
 import org.dspace.core.Context;
 import org.dspace.core.PluginManager;
-import org.orcid.jaxb.model.common_v2.ExternalId;
-import org.orcid.jaxb.model.common_v2.ExternalIds;
-import org.orcid.jaxb.model.record_v2.Citation;
-import org.orcid.jaxb.model.record_v2.CitationType;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkTitle;
-import org.orcid.jaxb.model.record_v2.WorkType;
+import org.orcid.jaxb.model.common_v3.ExternalId;
+import org.orcid.jaxb.model.common_v3.ExternalIds;
+import org.orcid.jaxb.model.record_v3.Citation;
+import org.orcid.jaxb.model.utils.CitationType;
+import org.orcid.jaxb.model.record_v3.Work;
+import org.orcid.jaxb.model.record_v3.WorkTitle;
+import org.orcid.jaxb.model.utils.WorkType;
 import org.restlet.resource.ResourceException;
 
 public class OrcidTest {
@@ -53,14 +53,14 @@ public class OrcidTest {
 		String citationFromBTE = outputStream.toString();
 
 		Citation citation = new Citation();
-		citation.setCitationType(CitationType.BIBTEX);
+		citation.setCitationType(CitationType.BIBTEX.value());
 		citation.setCitationValue(citationFromBTE);
 
 		WorkTitle title = new WorkTitle();
 		title.setTitle(item.getName());
 		work.setTitle(title);
 		work.setCitation(citation);
-		work.setType(WorkType.BOOK);
+		work.setType(WorkType.BOOK.value());
 
 		ExternalIds externalIdentifiers = new ExternalIds();
 		// WorkExternalIdentifier externalIdentifier = new

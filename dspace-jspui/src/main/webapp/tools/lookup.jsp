@@ -54,7 +54,19 @@
                parenttitlekey="jsp.administer"
                parentlink="/dspace-admin">
 
-        <h1><%= LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.field."+mdfield+".title") %></h1>
+<%
+String title;
+
+if(Boolean.valueOf(getDefaultedRequestParameter(request,"onlyLocal", "false")))
+{
+	title = LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.field."+mdfield+".title.local");
+}else
+{
+	title = LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.field."+mdfield+".title");
+}
+%>
+
+        <h1><%= title %></h1>
 
   <form id="aspect_general_ChoiceLookupTransformer_div_lookup"
         class="ds-interactive-div popup" action="" method="get">
@@ -86,6 +98,8 @@
           <input type="hidden" name="paramIsClosed"       value="<%= getDefaultedRequestParameter(request,"isClosed", "false") %>" />
           <input type="hidden" name="paramConfIndicatorID" value="<%= getDefaultedRequestParameter(request,"confIndicatorID", "") %>" />
           <input type="hidden" name="paramCollection"      value="<%= getDefaultedRequestParameter(request,"collection", "-1") %>" />
+          <input type="hidden" name="paramAuthorityValue" value="<%= getDefaultedRequestParameter(request,"authorityValue", "") %>" />
+          <input type="hidden" name="onlyLocal"				value="<%= getDefaultedRequestParameter(request,"onlyLocal", "false") %>" />
 
           <%-- XXX get this from dspace config if available..?? --%>
           <input type="hidden" name="paramNonAuthority"   value="<%= LocaleSupport.getLocalizedMessage(pageContext, "jsp.tools.lookup.field."+mdfield+".nonauthority") %>" />

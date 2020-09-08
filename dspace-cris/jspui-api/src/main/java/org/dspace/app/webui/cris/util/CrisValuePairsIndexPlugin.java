@@ -127,7 +127,7 @@ public class CrisValuePairsIndexPlugin implements CrisServiceIndexPlugin,
                         
                         buildSearchFilter(document, searchFilters,
                                 stored_value.toString(), field, field,
-                                displayVal, prefixedDisplayVal, authorityMapToWrite);
+                                displayVal, prefixedDisplayVal, authorityMapToWrite, null);
                         
                     }
                 }
@@ -225,6 +225,7 @@ public class CrisValuePairsIndexPlugin implements CrisServiceIndexPlugin,
                                             myInput.getElement(),
                                             myInput.getQualifier(), Item.ANY))
                                     {
+                                        String authority = metadatum.authority;
                                         String stored_value = metadatum.value;
                                         String displayVal = myInput
                                                 .getDisplayString(null,
@@ -245,7 +246,7 @@ public class CrisValuePairsIndexPlugin implements CrisServiceIndexPlugin,
                                                 stored_value.toString(),
                                                 metadatum.getField(),
                                                 unqualifiedField, displayVal,
-                                                prefixedDisplayVal, authorityMapToWrite);
+                                                prefixedDisplayVal, authorityMapToWrite, authority);
                                         
                                     }
                                 }
@@ -279,7 +280,7 @@ public class CrisValuePairsIndexPlugin implements CrisServiceIndexPlugin,
     private void buildSearchFilter(SolrInputDocument document,
             Map<String, List<DiscoverySearchFilter>> searchFilters,
             String stored_value, String field, String unqualifiedField,
-            String displayVal, String prefixedDisplayVal, Map<String, String> authorityMapToWrite)
+            String displayVal, String prefixedDisplayVal, Map<String, String> authorityMapToWrite, String authority)
     {
         if (searchFilters.containsKey(field))
         {
@@ -293,22 +294,34 @@ public class CrisValuePairsIndexPlugin implements CrisServiceIndexPlugin,
 
             for (DiscoverySearchFilter searchFilter : searchFilterConfigs)
             {
-                document.addField(searchFilter.getIndexFieldName() + "_keyword",
-                        prefixedDisplayVal + SolrServiceImpl.AUTHORITY_SEPARATOR
-                                + stored_value);
+                if(StringUtils.isNotBlank(authority)) {
+                    document.addField(searchFilter.getIndexFieldName() + "_keyword",
+                            prefixedDisplayVal + SolrServiceImpl.AUTHORITY_SEPARATOR
+                                    + authority);
+                    document.addField(searchFilter.getIndexFieldName() + "_acid",
+                            prefixedDisplayVal.toLowerCase() + separator
+                                    + displayVal
+                                    + SolrServiceImpl.AUTHORITY_SEPARATOR
+                                    + authority);
+                    document.addField(searchFilter.getIndexFieldName() + "_filter",
+                            prefixedDisplayVal.toLowerCase() + separator + displayVal
+                                    + SolrServiceImpl.AUTHORITY_SEPARATOR
+                                    + authority);
+                    authorityMapToWrite.put(searchFilter.getIndexFieldName() + "_authority", authority);
+                }
+                else {
+                    document.addField(searchFilter.getIndexFieldName() + "_keyword",
+                            prefixedDisplayVal);
+                    document.addField(searchFilter.getIndexFieldName() + "_acid",
+                            prefixedDisplayVal.toLowerCase() + separator
+                                    + displayVal);
+                    document.addField(searchFilter.getIndexFieldName() + "_filter",
+                            prefixedDisplayVal.toLowerCase() + separator + displayVal);
+                }
+
                 document.addField(searchFilter.getIndexFieldName() + "_ac",
                         prefixedDisplayVal.toLowerCase() + separator
                                 + displayVal);
-                document.addField(searchFilter.getIndexFieldName() + "_acid",
-                        prefixedDisplayVal.toLowerCase() + separator
-                                + displayVal
-                                + SolrServiceImpl.AUTHORITY_SEPARATOR
-                                + stored_value);
-                document.addField(searchFilter.getIndexFieldName() + "_filter",
-                        prefixedDisplayVal.toLowerCase() + separator + displayVal
-                                + SolrServiceImpl.AUTHORITY_SEPARATOR
-                                + stored_value);
-                authorityMapToWrite.put(searchFilter.getIndexFieldName() + "_authority", stored_value);
             }
         }
     }
