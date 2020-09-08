@@ -20,7 +20,8 @@
 )遷移修改而來。
 
 ### 在文件列表加入全文下載圖示
-[a01b9e7](https://github.com/NCHUIR/DSpace/commit/a01b9e7f17ae5907e62dc1df390d18f9a6bf8a98)
+[a01b9e7](https://github.com/NCHUIR/DSpace/commit/a01b9e7f17ae5907e62dc1df390d18f9a6bf8a98), 
+[c2dbf7a](https://github.com/NCHUIR/DSpace/commit/c2dbf7a5a8a815b5364e9f366aa67a3b705c72d8)
 
 ![加入全文下載圖示的文件列表的示意圖](doc/assets/item-list-fulltext-download-icon.png)
 
