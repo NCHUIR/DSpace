@@ -452,13 +452,17 @@
 			</div>
 			<% } %>
 			<!-- TAIR-Related-Article Display-->
+			<%
+				String targetTitle = title;
+				request.setAttribute("targetTitle", targetTitle);
+			%>
 			<div>&nbsp;</div>
 			<div class="panel panel-info">
 				<div class="panel-heading"><fmt:message key="jsp.display-item.tair-related"/></div>
 				<div class="panel-body">
 					<div id="related-dspace-content">
 						<c:import url="http://ir.nctu.edu.tw/related_article/">
-							<c:param name="targetTitle" value="${title}" />
+							<c:param name="targetTitle" value="${targetTitle}" />
 						</c:import>
 					</div>
 				</div>
