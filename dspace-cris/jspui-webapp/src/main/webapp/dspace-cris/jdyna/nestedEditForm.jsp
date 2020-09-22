@@ -328,6 +328,7 @@
 	<spring:bind path="nesteddto.*">
 		<c:if test="${!empty status.errorMessages}">
 			<div id="errorMessages">
+			<span type="hidden" id="nestederror">
 		</c:if>
 		<c:forEach items="${status.errorMessages}" var="error">
 			<span class="errorMessage"><fmt:message
@@ -335,6 +336,7 @@
 			<br />
 		</c:forEach>
 		<c:if test="${!empty status.errorMessages}">
+			</span>
 			<div id="errorMessages">
 		</c:if>
 	</spring:bind>

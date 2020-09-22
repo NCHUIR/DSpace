@@ -38,7 +38,7 @@ public class SolrAuthority implements ChoiceAuthority {
     protected SolrAuthorityInterface source = new DSpace().getServiceManager().getServiceByName("AuthoritySource", SolrAuthorityInterface.class);
     private boolean externalResults = false;
 
-    public Choices getMatches(String field, String text, int collection, int start, int limit, String locale, boolean bestMatch) {
+    public Choices getMatches(String field, String text, int collection, int start, int limit, String locale) {
         if(limit == 0)
             limit = 10;
 
@@ -176,11 +176,6 @@ public class SolrAuthority implements ChoiceAuthority {
     }
 
     @Override
-    public Choices getMatches(String field, String text, int collection, int start, int limit, String locale) {
-        return getMatches(field, text, collection, start, limit, locale, true);
-    }
-
-    @Override
     public Choices getBestMatch(String field, String text, int collection, String locale) {
         Choices matches = getMatches(field, text, collection, 0, 1, locale, false);
         if (matches.values.length !=0 && !matches.values[0].value.equalsIgnoreCase(text)) {
@@ -255,4 +250,13 @@ public class SolrAuthority implements ChoiceAuthority {
     public void addExternalResultsInNextMatches() {
         this.externalResults = true;
     }
+
+	@Override
+	public Choices getMatches(String field, String text, int collection, int start, int limit, String locale,
+			boolean externalInput) {
+		if (externalInput) {
+            addExternalResultsInNextMatches();
+        }
+		return getMatches(field, text, collection, start, limit, locale);
+	}
 }

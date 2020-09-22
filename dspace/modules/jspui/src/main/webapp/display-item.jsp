@@ -236,17 +236,6 @@
 </c:set>
 <% } %>
 
-<%-- For TAIR-Related --%>
-<%
-	List<String> titleValue = item.getMetadataValue("title");
-	String targetTitle = "";
-	if (titleValue.size() != 0)
-	{
-		targetTitle = titleValue.get(0);
-	}
-	request.setAttribute("targetTitle", targetTitle);
-%>
-
 <dspace:layout title="<%= title %>">
 	<%
 		if (handle != null)
@@ -463,6 +452,10 @@
 			</div>
 			<% } %>
 			<!-- TAIR-Related-Article Display-->
+			<%
+				String targetTitle = title;
+				request.setAttribute("targetTitle", targetTitle);
+			%>
 			<div>&nbsp;</div>
 			<div class="panel panel-info">
 				<div class="panel-heading"><fmt:message key="jsp.display-item.tair-related"/></div>

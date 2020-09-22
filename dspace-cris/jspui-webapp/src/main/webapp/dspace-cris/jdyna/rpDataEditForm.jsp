@@ -195,6 +195,7 @@
 							j('#viewnested_'+id+' .nested_edit_button').parent().parent().mouseout(function(){
 								j(this).toggleClass('ui-state-hover');
 							});
+							j('#viewnested_'+id+'_original').html(j('#viewnested_'+id).html());
 							j('#viewnested_'+id+' .nested_edit_button').click(function(){
 								var ajaxurleditnested = 
 									"<%= request.getContextPath() %>/cris/tools/${specificPartPath}/editNested.htm";
@@ -212,9 +213,16 @@
 											j('#nested_edit_dialog input:submit').button();
 											var options = { 
 											        target: '#viewnested_'+id,   // target element(s) to be updated with server response 
-											        success: function(){ // post-submit callback
-											        	j('#nested_edit_dialog').dialog("close");        
-											        	postfunction();
+											        success: function(data){ // post-submit callback
+											            j('#nested_edit_dialog > #nested_edit_form').html('');
+											            if (j('#nestederror').length == 0) {
+											                j('#nested_edit_dialog').dialog('close');
+											            }
+											            else {
+											                j('#nested_edit_dialog > #nested_edit_form').html(j(data).children());
+											                j('#viewnested_'+id).html(j('#viewnested_'+id+'_original').html());
+											            }
+											            postfunction();
 										        	}
 											};
 											j('#nested_edit_form').ajaxForm(options); 
@@ -302,9 +310,16 @@
 											j('#nested_edit_dialog input:submit').button();
 											var options = { 
 											        target: '#viewnested_'+id,   // target element(s) to be updated with server response 
-											        success: function(){ // post-submit callback
-											        	j('#nested_edit_dialog').dialog("close");        
-											        	postfunction();
+											        success: function(data){ // post-submit callback
+											            j('#nested_edit_dialog > #nested_edit_form').html('');
+											            if (j('#nestederror').length == 0) {
+											                j('#nested_edit_dialog').dialog('close');
+											            }
+											            else {
+											                j('#nested_edit_dialog > #nested_edit_form').html(j(data).children());
+											                j('#viewnested_'+id).html(j('#viewnested_'+id+'_original').html());
+											            }
+											            postfunction();
 										        	}
 											};
 											j('#nested_edit_form').ajaxForm(options); 
@@ -1025,6 +1040,7 @@
 								<c:if test="${tipologiaDaVisualizzare.real.newline}">
 									<div class="dynaClear">&nbsp;</div>
 								</c:if>
+								<div id="viewnested_${tipologiaDaVisualizzare.real.id}_original" class="viewnested_original" style="display:none"></div>
 							</c:if>
 
 							

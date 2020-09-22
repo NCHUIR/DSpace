@@ -294,14 +294,14 @@ public final class ChoiceAuthorityManager
     public Choices getMatches(String fieldKey, String query, int collection, int start, int limit, String locale, boolean externalInput) {
         ChoiceAuthority ma = controller.get(fieldKey);
         if (ma == null) {
-            throw new IllegalArgumentException(
-                    "No choices plugin was configured for  field \"" + fieldKey
-                            + "\".");
+        	ma = reloadCache(fieldKey);
+            if(ma == null) {
+	            throw new IllegalArgumentException(
+	                    "No choices plugin was configured for  field \"" + fieldKey
+	                            + "\".");
+            }
         }
-        if (externalInput && ma instanceof SolrAuthority) {
-            ((SolrAuthority)ma).addExternalResultsInNextMatches();
-        }
-        return ma.getMatches(fieldKey, query, collection, start, limit, locale);
+        return ma.getMatches(fieldKey, query, collection, start, limit, locale, externalInput);
     }
 
     /**

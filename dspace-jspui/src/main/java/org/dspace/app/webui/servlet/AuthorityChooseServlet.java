@@ -76,8 +76,14 @@ public class AuthorityChooseServlet extends DSpaceServlet {
         int collection = UIUtil.getIntParameter(request, "collection");
         int start = UIUtil.getIntParameter(request, "start");
         int limit = UIUtil.getIntParameter(request, "limit");
-
-        Choices result = cam.getMatches(field, query, collection, start, limit, null);
+        Choices result;
+        if (request.getParameter("onlyLocal") != null) {
+            boolean onlyLocal = UIUtil.getBoolParameter(request, "onlyLocal");
+        	result = cam.getMatches(field, query, collection, start, limit, null, !onlyLocal);
+        }
+        else {
+        	result = cam.getMatches(field, query, collection, start, limit, null);
+        }
 //        USE FOR TEST SCOPE        
 //        Map<String, String> extras = new HashMap<String,String>();
 //        extras.put("link", "www.google.com");

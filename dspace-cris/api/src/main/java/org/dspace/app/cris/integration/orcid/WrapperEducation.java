@@ -1,6 +1,6 @@
 package org.dspace.app.cris.integration.orcid;
 
-import org.orcid.jaxb.model.record_v2.Education;
+import org.orcid.jaxb.model.record_v3.Education;
 
 public class WrapperEducation {
     

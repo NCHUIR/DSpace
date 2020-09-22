@@ -30,6 +30,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.dspace.app.webui.servlet.DSpaceServlet;
+import org.dspace.app.webui.util.UIUtil;
 import org.dspace.authorize.AuthorizeException;
 import org.dspace.authorize.AuthorizeManager;
 import org.dspace.authorize.ResourcePolicy;
@@ -64,9 +65,12 @@ public class InPageLoginServlet extends DSpaceServlet
 	{
 		String url = request.getParameter("url");
 		EPerson user = context.getCurrentUser();
+
 		if (user == null) {
 			throw new AuthorizeException("The login is required to see the bitstreams");
 		}
+
+		url = UIUtil.checkRedirectURL(url);
 		response.sendRedirect(url);
 	}
 

@@ -8,12 +8,12 @@
 package org.dspace.authority.orcid;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -36,42 +36,52 @@ import org.apache.commons.cli.PosixParser;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.dspace.authority.AuthorityValue;
-import org.orcid.jaxb.model.record_v2.Educations;
-import org.orcid.jaxb.model.record_v2.Employments;
-import org.orcid.jaxb.model.record_v2.Fundings;
-import org.orcid.jaxb.model.record_v2.WorkGroup;
-import org.orcid.jaxb.model.record_v2.Works;
-import org.orcid.jaxb.model.record_v2.Address;
-import org.orcid.jaxb.model.record_v2.Addresses;
-import org.orcid.jaxb.model.record_v2.WorkBulk;
-import org.orcid.jaxb.model.record_v2.SourceReference;
-import org.orcid.jaxb.model.record_v2.Education;
-import org.orcid.jaxb.model.record_v2.EducationSummary;
-import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.Employment;
-import org.orcid.jaxb.model.record_v2.EmploymentSummary;
-import org.orcid.jaxb.model.record_v2.Funding;
-import org.orcid.jaxb.model.record_v2.Keyword;
-import org.orcid.jaxb.model.record_v2.Keywords;
-import org.orcid.jaxb.model.record_v2.OtherName;
-import org.orcid.jaxb.model.record_v2.OtherNames;
-import org.orcid.jaxb.model.record_v2.Person;
-import org.orcid.jaxb.model.record_v2.ExternalIdentifier;
-import org.orcid.jaxb.model.record_v2.ExternalIdentifiers;
-import org.orcid.jaxb.model.record_v2.PersonalDetails;
-import org.orcid.jaxb.model.record_v2.ResearcherUrl;
-import org.orcid.jaxb.model.record_v2.ResearcherUrls;
-import org.orcid.jaxb.model.record_v2.Work;
-import org.orcid.jaxb.model.record_v2.WorkSummary;
 import org.dspace.authority.rest.RestSource;
 import org.dspace.content.DCPersonName;
-import org.dspace.content.DSpaceObject;
 import org.dspace.core.ConfigurationManager;
 import org.dspace.utils.DSpace;
-import org.glassfish.jersey.message.internal.MessageBodyProviderNotFoundException;
-import org.orcid.jaxb.model.record_v2.Record;
-import org.orcid.jaxb.model.search_v2.Result;
-import org.orcid.jaxb.model.search_v2.Search;
+import org.orcid.jaxb.model.common_v3.Affiliation;
+import org.orcid.jaxb.model.common_v3.AffiliationSummary;
+import org.orcid.jaxb.model.record_v3.Address;
+import org.orcid.jaxb.model.record_v3.Addresses;
+import org.orcid.jaxb.model.record_v3.Distinction;
+import org.orcid.jaxb.model.record_v3.Distinctions;
+import org.orcid.jaxb.model.record_v3.Education;
+import org.orcid.jaxb.model.record_v3.EducationSummary;
+import org.orcid.jaxb.model.record_v3.Educations;
+import org.orcid.jaxb.model.record_v3.Emails;
+import org.orcid.jaxb.model.record_v3.Employment;
+import org.orcid.jaxb.model.record_v3.EmploymentSummary;
+import org.orcid.jaxb.model.record_v3.Employments;
+import org.orcid.jaxb.model.record_v3.ExternalIdentifier;
+import org.orcid.jaxb.model.record_v3.ExternalIdentifiers;
+import org.orcid.jaxb.model.record_v3.Funding;
+import org.orcid.jaxb.model.record_v3.Fundings;
+import org.orcid.jaxb.model.record_v3.InvitedPosition;
+import org.orcid.jaxb.model.record_v3.InvitedPositions;
+import org.orcid.jaxb.model.record_v3.Keyword;
+import org.orcid.jaxb.model.record_v3.Keywords;
+import org.orcid.jaxb.model.record_v3.Membership;
+import org.orcid.jaxb.model.record_v3.Memberships;
+import org.orcid.jaxb.model.record_v3.OtherName;
+import org.orcid.jaxb.model.record_v3.OtherNames;
+import org.orcid.jaxb.model.record_v3.Person;
+import org.orcid.jaxb.model.record_v3.PersonalDetails;
+import org.orcid.jaxb.model.record_v3.Qualification;
+import org.orcid.jaxb.model.record_v3.QualificationSummary;
+import org.orcid.jaxb.model.record_v3.Qualifications;
+import org.orcid.jaxb.model.record_v3.Record;
+import org.orcid.jaxb.model.record_v3.ResearcherUrl;
+import org.orcid.jaxb.model.record_v3.ResearcherUrls;
+import org.orcid.jaxb.model.record_v3.Service;
+import org.orcid.jaxb.model.record_v3.Services;
+import org.orcid.jaxb.model.record_v3.Work;
+import org.orcid.jaxb.model.record_v3.WorkBulk;
+import org.orcid.jaxb.model.record_v3.WorkGroup;
+import org.orcid.jaxb.model.record_v3.WorkSummary;
+import org.orcid.jaxb.model.record_v3.Works;
+import org.orcid.jaxb.model.search_v3.Result;
+import org.orcid.jaxb.model.search_v3.Search;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -123,6 +133,36 @@ public class OrcidService extends RestSource
     public static final String EMPLOYMENT_ENDPOINT = "/employment";
 
     public static final String EMPLOYMENT_SUMMARY_ENDPOINT = "/employment/summary";
+
+    public static final String DISTINCTIONS_ENDPOINT = "/distinctions";
+
+    public static final String DISTINCTION_ENDPOINT = "/distinction";
+
+    public static final String DISTINCTION_SUMMARY_ENDPOINT = "/distinction/summary";
+
+    public static final String INVITED_POSITIONS_ENDPOINT = "/invited-positions";
+
+    public static final String INVITED_POSITION_ENDPOINT = "/invited-position";
+
+    public static final String INVITED_POSITION_SUMMARY_ENDPOINT = "/invited-position/summary";
+
+    public static final String MEMBERSHIPS_ENDPOINT = "/memberships";
+
+    public static final String MEMBERSHIP_ENDPOINT = "/membership";
+
+    public static final String MEMBERSHIP_SUMMARY_ENDPOINT = "/membership/summary";
+
+    public static final String QUALIFICATIONS_ENDPOINT = "/qualifications";
+
+    public static final String QUALIFICATION_ENDPOINT = "/qualification";
+
+    public static final String QUALIFICATION_SUMMARY_ENDPOINT = "/qualification/summary";
+
+    public static final String SERVICES_ENDPOINT = "/services";
+
+    public static final String SERVICE_ENDPOINT = "/service";
+
+    public static final String SERVICE_SUMMARY_ENDPOINT = "/service/summary";
 
     public static final String EXTERNAL_IDENTIFIERS_ENDPOINT = "/external-identifiers";
 
@@ -280,6 +320,22 @@ public class OrcidService extends RestSource
         return message;
     }
 
+    public WorkBulk getWorkBulk(String id, String token, List<String> putCodes)
+    {
+        String endpoint = id + WORKS_ENDPOINT;
+        WorkBulk message = null;
+        try
+        {
+            String sPutCodes = StringUtils.join(putCodes, ",");
+            message = get(endpoint, token, sPutCodes).readEntity(WorkBulk.class);
+        }
+        catch (Exception e)
+        {
+            log.error(e);
+        }
+        return message;
+    }
+
     public WorkSummary getWorkSummary(String id, String token, String putCode)
     {
 
@@ -305,6 +361,21 @@ public class OrcidService extends RestSource
         try
         {
             message = get(endpoint, token, putCode).readEntity(Work.class);
+        }
+        catch (Exception e)
+        {
+            log.error(e);
+        }
+        return message;
+    }
+
+    public Funding getFunding(String id, final String token, final String putCode)
+    {
+        String endpoint = id + FUNDING_ENDPOINT;
+        Funding message = null;
+        try
+        {
+            message = get(endpoint, token, putCode).readEntity(Funding.class);
         }
         catch (Exception e)
         {
@@ -405,27 +476,37 @@ public class OrcidService extends RestSource
     public List<AuthorityValue> queryOrcidBioByFamilyNameAndGivenName(
             String text, int start, int max) throws IOException
     {
-        DCPersonName tmpPersonName = new DCPersonName(text);
+        StringBuilder query = new StringBuilder();
 
-        String query = "";
-        if (StringUtils.isNotBlank(tmpPersonName.getLastName()))
-        {
-            query += "family-name:(" + tmpPersonName.getLastName().trim()
-                    + (StringUtils.isNotBlank(tmpPersonName.getFirstNames())
-                            ? "" : "*")
-                    + ")";
+        if(StringUtils.isNotBlank(text)) {
+            DCPersonName tmpPersonName = new DCPersonName(text);
+            query.append("(");
+            if (StringUtils.isNotBlank(tmpPersonName.getLastName()))
+            {
+                query.append("family-name:(").append(tmpPersonName.getLastName().trim())
+                		.append( (StringUtils.isNotBlank(tmpPersonName.getFirstNames()) 
+                				? "" : "*") )
+                					.append(")");
+            }
+    
+            if (StringUtils.isNotBlank(tmpPersonName.getFirstNames()))
+            {
+                if (StringUtils.isNotBlank(tmpPersonName.getLastName())) {
+                    query.append(" AND ");        
+                }
+                query.append("given-names:(")
+                			.append(tmpPersonName.getFirstNames().trim()).append("*)");
+            }
+            query.append(")");
+            query.append(" OR ");
+            query.append("other-names:(").append(text).append(")");
+        }
+        else {
+            //default action, should be never used 
+            query.append("other-names:*");
         }
 
-        if (StringUtils.isNotBlank(tmpPersonName.getFirstNames()))
-        {
-            query += (query.length() > 0 ? " AND given-names:("
-                    : "given-names:(") + tmpPersonName.getFirstNames().trim()
-                    + "*)";
-        }
-
-        query += " OR other-names:(" + text + ")";
-
-        List<Result> results = search(query, start, max);
+        List<Result> results = search(query.toString(), start, max);
 
         return getAuthorityValuesFromOrcidResults(results);
     }
@@ -557,11 +638,76 @@ public class OrcidService extends RestSource
             List<Result> results)
     {
         List<AuthorityValue> authorities = new ArrayList<AuthorityValue>();
-        for (Result result : results)
-        {
-            authorities.add(OrcidAuthorityValue.create(
-                    get(result.getOrcidIdentifier().getUriPath(), null, null)
-                            .readEntity(Record.class)));
+        int maxThreads = ConfigurationManager.getIntProperty("orcid.addexternalresults.thread.max", 5);
+        
+        final Integer maxItems;
+        Double size = (double) results.size();
+        Double res = Math.ceil(size / maxThreads);
+        maxItems = res.intValue();
+        final Map<Integer, List<AuthorityValue>> threadResultsMap = new HashMap<>();
+        List<Thread> threads = new ArrayList<Thread>();
+
+        for (int i = 0; i < maxThreads; i++) {
+
+        	final List<Result> resultsToWork = new ArrayList<>();
+
+        	size = (double) results.size();
+        	for (int j = 0; j < maxItems; j++) {
+
+        		if (results.size() <= 0) {
+        			break;
+        		}
+        		if ((j == (maxItems - 1)) && ((size / (maxThreads - i)) <= (maxItems - 1))) {
+        			break;
+        		}
+        		resultsToWork.add(results.remove(0));
+        	}
+
+        	final Integer threadNumber = i;
+        	threads.add(new Thread() {
+
+        		int num = threadNumber;
+        		List<Result> results = resultsToWork;
+
+        		@Override
+        		public void run()
+        		{
+        			threadResultsMap.put(num, new ArrayList<AuthorityValue>());
+        			for (Result result : results) {
+        				threadResultsMap.get(num).add(OrcidAuthorityValue.create(
+        						get(result.getOrcidIdentifier().getUriPath(), null, null)
+        						.readEntity(Record.class)));
+        				Thread.yield();
+        			}
+        		}
+        	});
+        }
+
+        List<Thread> threadsStarted = new ArrayList<Thread>();
+
+        while (!threads.isEmpty() || !threadsStarted.isEmpty()) {
+        	if (!threads.isEmpty() && threadsStarted.size() < maxThreads) {
+        		Thread t = threads.remove(0);
+        		t.start();
+        		threadsStarted.add(t);
+        	}else {
+        		Thread t = threadsStarted.remove(0);
+        		try {
+        			t.join();
+        		} catch (InterruptedException e) {
+        			log.error(e.getMessage(), e);
+        		}
+        	}
+        }
+
+
+        for (int i = 0; i < threadResultsMap.size(); i++) {
+        	if(!threadResultsMap.get(i).isEmpty())
+        	{
+        		for (AuthorityValue authValue : threadResultsMap.get(i)) {
+        			authorities.add(authValue);
+        		}
+        	}
         }
         return authorities;
     }
@@ -844,6 +990,296 @@ public class OrcidService extends RestSource
             final String putCode)
     {
         String endpoint = id + EMPLOYMENT_SUMMARY_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(EmploymentSummary.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public Distinctions getDistinctions(String id, final String token)
+    {
+        String endpoint = id + DISTINCTIONS_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, null);
+
+            return response.readEntity(Distinctions.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public Distinction getDistinction(String id, final String token, final String putCode)
+    {
+        String endpoint = id + DISTINCTION_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(Distinction.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public AffiliationSummary getDistinctionSummary(String id, final String token,
+            final String putCode)
+    {
+        String endpoint = id + DISTINCTION_SUMMARY_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(AffiliationSummary.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public InvitedPositions getInvitedPositions(String id, final String token)
+    {
+        String endpoint = id + INVITED_POSITIONS_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, null);
+
+            return response.readEntity(InvitedPositions.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public InvitedPosition getInvitedPosition(String id, final String token, final String putCode)
+    {
+        String endpoint = id + INVITED_POSITION_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(InvitedPosition.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public AffiliationSummary getInvitedPositionSummary(String id, final String token,
+            final String putCode)
+    {
+        String endpoint = id + INVITED_POSITION_SUMMARY_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(AffiliationSummary.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public Memberships getMemberships(String id, final String token)
+    {
+        String endpoint = id + MEMBERSHIPS_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, null);
+
+            return response.readEntity(Memberships.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public Membership getMembership(String id, final String token, final String putCode)
+    {
+        String endpoint = id + MEMBERSHIP_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(Membership.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public AffiliationSummary getMembershipSummary(String id, final String token,
+            final String putCode)
+    {
+        String endpoint = id + MEMBERSHIP_SUMMARY_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(AffiliationSummary.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public Qualifications getQualifications(String id, final String token)
+    {
+        String endpoint = id + QUALIFICATIONS_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, null);
+
+            return response.readEntity(Qualifications.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public Qualification getQualification(String id, final String token, final String putCode)
+    {
+        String endpoint = id + QUALIFICATION_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(Qualification.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public QualificationSummary getQualificationSummary(String id, final String token,
+            final String putCode)
+    {
+        String endpoint = id + QUALIFICATION_SUMMARY_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(QualificationSummary.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public Services getServices(String id, final String token)
+    {
+        String endpoint = id + SERVICES_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, null);
+
+            return response.readEntity(Services.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public Service getService(String id, final String token, final String putCode)
+    {
+        String endpoint = id + SERVICE_ENDPOINT;
+        Response response = null;
+        try
+        {
+            response = get(endpoint, token, putCode);
+
+            return response.readEntity(Service.class);
+        }
+        finally
+        {
+            if (response != null)
+            {
+                response.close();
+            }
+        }
+    }
+
+    public EmploymentSummary getServiceSummary(String id, final String token,
+            final String putCode)
+    {
+        String endpoint = id + SERVICE_SUMMARY_ENDPOINT;
         Response response = null;
         try
         {

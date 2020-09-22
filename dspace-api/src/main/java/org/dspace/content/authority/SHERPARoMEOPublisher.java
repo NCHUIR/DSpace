@@ -60,5 +60,11 @@ public class SHERPARoMEOPublisher extends SHERPARoMEOProtocol
     @Override
     public Choices getMatches(String field, String text, int collection, int start, int limit, String locale) {
         return getMatches(text, collection, start, limit, locale);
-    }    
+    }
+
+	@Override
+	public Choices getMatches(String field, String text, int collection, int start, int limit, String locale,
+			boolean extra) {
+		return getMatches(field, text, collection, start, limit, locale);
+	}    
 }

@@ -66,4 +66,10 @@ public class SampleAuthority implements ChoiceAuthority
     {
         return labels[Integer.parseInt(key)];
     }
+
+	@Override
+	public Choices getMatches(String field, String text, int collection, int start, int limit, String locale,
+			boolean extra) {
+		return getMatches(field, text, collection, start, limit, locale);
+	}
 }

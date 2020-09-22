@@ -757,6 +757,9 @@ public class ItemTag extends TagSupport {
 										
 										boolean isEmbargo = false;
 										Date embargoDate = null;
+
+										boolean isInternalNetworkOnly = false;
+										String internalNetworkGroupName = ConfigurationManager.getProperty("authentication-ip", "ip.GROUPNAME");
 										
 										for (ResourcePolicy rp : rps) {
 											Group g = rp.getGroup();
@@ -767,6 +770,13 @@ public class ItemTag extends TagSupport {
 													if (rp.getStartDate() != null && rp.getStartDate().after(new Date())) {
 														isEmbargo = true;
 														embargoDate = rp.getStartDate();
+													}
+												} else if (g.getName().equals(internalNetworkGroupName)) {
+													if (rp.getStartDate() != null && rp.getStartDate().after(new Date())) {
+														isEmbargo = true;
+														embargoDate = rp.getStartDate();
+													} else {
+														isInternalNetworkOnly = true;
 													}
 												} else {
 													if (rp.isDateValid()) {
@@ -809,6 +819,8 @@ public class ItemTag extends TagSupport {
 															"org.dspace.app.webui.jsptag.ItemTag.restricted-to",
 															new Object[] { sb.toString() }));
 												}
+											} else if (ConfigurationManager.getBooleanProperty("webui.itemtag.show-internal-network-only", true) && isInternalNetworkOnly) {
+												out.print(LocaleSupport.getLocalizedMessage(pageContext, "org.dspace.app.webui.jsptag.ItemTag.internalNetworkOnly"));
 											}
 										}
 										else {

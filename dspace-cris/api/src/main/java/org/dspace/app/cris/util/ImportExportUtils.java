@@ -262,17 +262,17 @@ public class ImportExportUtils {
     
                       // HEADER_CRISID(parent object), HEADER_SOURCEREF(parent object), HEADER_SOURCEID(parent object), HEADER_UUID,HEADER_SOURCEREF,HEADER_SOURCEID
                         int yy = 0;
-                        UtilsXLS.addCell(sheetNested, 0, ii, rp.getSourceID());
+                        UtilsXLS.addCell(sheetNested, 0, ii, rp.getCrisID());
                         yy++;
                         UtilsXLS.addCell(sheetNested, 1, ii, rp.getSourceRef());
                         yy++;
                         UtilsXLS.addCell(sheetNested, 2, ii, rp.getSourceID());
                         yy++;
-                        UtilsXLS.addCell(sheetNested, 3, ii, rp.getUuid());
+                        UtilsXLS.addCell(sheetNested, 3, ii, rpn.getUuid());
                         yy++;
-                        UtilsXLS.addCell(sheetNested, 4, ii, rp.getSourceRef());
+                        UtilsXLS.addCell(sheetNested, 4, ii, rpn.getSourceReference().getSourceRef());
                         yy++;
-                        UtilsXLS.addCell(sheetNested, 5, ii, rp.getSourceID());
+                        UtilsXLS.addCell(sheetNested, 5, ii, rpn.getSourceReference().getSourceID());
     
                         try
                         {

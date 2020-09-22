@@ -41,6 +41,8 @@ public interface ChoiceAuthority
      */
     public Choices getMatches(String field, String text, int collection, int start, int limit, String locale);
 
+    public Choices getMatches(String field, String text, int collection, int start, int limit, String locale, boolean externalInput);
+    
     /**
      * Get the single "best" match (if any) of a value in the authority
      * to the given user value.  The "confidence" element of Choices is

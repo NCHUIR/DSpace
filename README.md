@@ -20,9 +20,21 @@
 )遷移修改而來。
 
 ### 在文件列表加入全文下載圖示
-[a01b9e7](https://github.com/NCHUIR/DSpace/commit/a01b9e7f17ae5907e62dc1df390d18f9a6bf8a98)
+[a01b9e7](https://github.com/NCHUIR/DSpace/commit/a01b9e7f17ae5907e62dc1df390d18f9a6bf8a98), 
+[c2dbf7a](https://github.com/NCHUIR/DSpace/commit/c2dbf7a5a8a815b5364e9f366aa67a3b705c72d8)
 
 ![加入全文下載圖示的文件列表的示意圖](doc/assets/item-list-fulltext-download-icon.png)
 
 其中紅色框的部分爲*全文下載圖示功能*，如果沒有全文可供下載，將顯示"-"代表無法下載。
 
+### 在文件下載僅限內網/隱藏文件時顯示提示訊息
+[82af9f4](https://github.com/NCHUIR/DSpace/commit/82af9f41c01df0ab893ca902c6e59a22ac03d59b) (開啓內網IP權限設定), 
+[b772218](https://github.com/NCHUIR/DSpace/commit/b772218b050d9696814c74bcb9d8930b5fc2be65), 
+[212ff08](https://github.com/NCHUIR/DSpace/commit/212ff08ac21504f0edd88231234e67bb380e1c45)
+
+![加入僅供內網下載提示訊息的示意圖](doc/assets/bitstream-internal-hint.png)
+
+其中紅色框的部分爲*內網下載提示訊息*，如果目前使用者沒有權限、
+全文權限包含群組**InternalNetwork**的READ權限且使用者的IP不在名單中
+([authentication-ip.cfg](config/modules/authentication-ip.cfg))
+則顯示內網下載提示訊息。

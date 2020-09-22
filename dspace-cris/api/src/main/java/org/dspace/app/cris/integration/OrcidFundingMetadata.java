@@ -65,6 +65,8 @@ public class OrcidFundingMetadata extends MappingMetadata {
 	public static final String ORGANIZATION_CITY = "organization.city";
 	public static final String ORGANIZATION_COUNTRY = "organization.country";
 	
+	public static final String ORGANIZATION_DISAMBIGUATION_IDENTIFIER = "organization.disambiguation-identifier";
+	public static final String ORGANIZATION_DISAMBIGUATION_IDENTIFIER_SOURCE = "organization.disambiguation-identifier-source";
 
 	/**
 	 * Wrap the item, parse all configured fields and generate metadata field
@@ -120,7 +122,8 @@ public class OrcidFundingMetadata extends MappingMetadata {
 		addSingleField(ORGANIZATION);
 		addSingleField(ORGANIZATION_CITY);
 		addSingleField(ORGANIZATION_COUNTRY);
-		
+		addSingleField(ORGANIZATION_DISAMBIGUATION_IDENTIFIER);
+		addSingleField(ORGANIZATION_DISAMBIGUATION_IDENTIFIER_SOURCE);
 	}
 
 
@@ -271,6 +274,20 @@ public class OrcidFundingMetadata extends MappingMetadata {
 	public String getOrganizationCountry() {
 		if (!metadataMappings.get(ORGANIZATION_COUNTRY).isEmpty()) {
 			return metadataMappings.get(ORGANIZATION_COUNTRY).get(0);
+		}
+		return null;
+	}
+
+	public String getOrganizationDisambiguationIdentifier() {
+		if (!metadataMappings.get(ORGANIZATION_DISAMBIGUATION_IDENTIFIER).isEmpty()) {
+			return metadataMappings.get(ORGANIZATION_DISAMBIGUATION_IDENTIFIER).get(0);
+		}
+		return null;
+	}
+
+	public String getOrganizationDisambiguationIdentifierSource() {
+		if (!metadataMappings.get(ORGANIZATION_DISAMBIGUATION_IDENTIFIER_SOURCE).isEmpty()) {
+			return metadataMappings.get(ORGANIZATION_DISAMBIGUATION_IDENTIFIER_SOURCE).get(0);
 		}
 		return null;
 	}

@@ -49,7 +49,7 @@
     if (coment == null)
         coment = "";
     
-    String bitstream_id = (String) request.getAttribute("bitstream-id");
+    int bitstream_id = (Integer) request.getAttribute("bitstream-id");
     boolean allfiles = (request.getAttribute("allfiles") != null);
 
 %>

@@ -22,9 +22,9 @@ import org.dspace.core.ConfigurationManager;
 import org.dspace.core.Context;
 import org.dspace.core.LogManager;
 import org.dspace.eperson.EPerson;
-import org.orcid.jaxb.model.record_v2.EmailType;
-import org.orcid.jaxb.model.record_v2.Emails;
-import org.orcid.jaxb.model.record_v2.PersonalDetails;
+import org.orcid.jaxb.model.record_v3.EmailType;
+import org.orcid.jaxb.model.record_v3.Emails;
+import org.orcid.jaxb.model.record_v3.PersonalDetails;
 
 /**
  *
