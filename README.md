@@ -8,6 +8,18 @@
 
 請服用[官方文件#Installation](https://wiki.lyrasis.org/display/DSPACECRIS/Installation)
 
+## 設定
+### OAI Index
+請記得設定OAI 2.0的索引： [官方文件#OAI 2.0](https://wiki.lyrasis.org/display/DSDOC5x/OAI+2.0+Server)
+建議以crontab每天執行一次
+
+### Solr statistics
+[官方文件#SOLR Statistics](https://wiki.lyrasis.org/display/DSDOC5x/SOLR+Statistics)
+
+GeoLite已有新版本GeoLite2，在```[dspace-source]/config/modules/usage-statistics.cfg```
+中已設定GeoLite2-City資料庫存放位置為```/usr/share/GeoIP/GeoLite2-City.mmdb```，若安裝時沒有自動生成，
+請到 [MaxMind](https://dev.maxmind.com/geoip/geoip2/geolite2) 下載。
+
 ## 客製化功能說明
 
 ### 修改社群列表(community-list)界面及加入全文統計功能
