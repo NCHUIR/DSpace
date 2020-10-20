@@ -23,6 +23,7 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="org.dspace.app.webui.util.UIUtil" %>
 <%@ page import="org.dspace.app.webui.util.LocaleUIHelper" %>
+<%@ page import="org.dspace.statistics.ItemWithBitstreamVsTotalCounter" %>
 
 <%
 	String footerNews = NewsManager.readNewsFile(LocaleSupport.getLocalizedMessage(pageContext, "news-footer.html"));
@@ -35,6 +36,7 @@
 	
 	boolean showCommList = ConfigurationManager.getBooleanProperty("community-list.show.all",true);
 	boolean isRtl = StringUtils.isNotBlank(LocaleUIHelper.ifLtr(request, "","rtl"));
+	ItemWithBitstreamVsTotalCounter siteCount = ItemWithBitstreamVsTotalCounter.getSiteCount();
 %>
 
             <%-- Right-hand side bar if appropriate --%>
@@ -94,6 +96,10 @@
 	</div>
 	</div>
 	             	<div class="col-md-3 col-sm-3">
+						<span>
+                    		<fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix" /><%= siteCount.toString() %>
+                		</span>
+						<br>
 	             		<%= footerNews %>
 	             	</div>
 	            </div> 
