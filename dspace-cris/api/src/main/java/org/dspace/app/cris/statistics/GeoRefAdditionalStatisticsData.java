@@ -132,7 +132,7 @@ public class GeoRefAdditionalStatisticsData implements
             
             DatabaseReader service = null;
             // Get the db file for the location
-            String dbPath = ConfigurationManager.getProperty(SolrLogger.CFG_USAGE_MODULE, "dbfile");
+            String dbPath = ConfigurationManager.getProperty(SolrLogger.CFG_USAGE_MODULE, "usage-statistics.dbfile");
             if (dbPath != null) {
                 try {
                     File dbFile = new File(dbPath);
