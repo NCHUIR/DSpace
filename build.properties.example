@@ -382,5 +382,20 @@ oapiwik.piwik.enabled =
 
 oai.cache.enabled = true
 
-### Customization by NCHU IR
+### Customization by NCHU IR ###
 webui.submit.upload.required = false
+
+### Solr Usage Statistics ###
+# see: https://wiki.lyrasis.org/display/DSDOC5x/SOLR+Statistics
+# please download GeoLite2-City.mmdb instead of GeoLiteCity.dat
+# download: https://dev.maxmind.com/geoip/geoip2/geolite2/
+# usage-statistics.dbfile=/usr/share/GeoIP/GeoLite2-City.mmdb
+usage-statistics.dbfile=/usr/share/GeoIP/GeoLite2-City.mmdb
+
+### GOOGLEAPI for GOOGLE ANALYTICS ###
+# see: dsapce/config/modules/google-analytics.cfg
+ga.application.name=Dummy App
+ga.table.id=ga:123456789
+ga.account.email=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx@developer.gserviceaccount.com
+ga.certificate.location=
+ga.authorization.admin.usage=true
