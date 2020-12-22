@@ -107,7 +107,7 @@ public class ScopusService {
 			int numberOfTries = 0;
 	
 			boolean done = false;
-			while (numberOfTries < maxNumberOfTries && done) {
+			while (numberOfTries < maxNumberOfTries && !done) {
 				numberOfTries++;
 				try {
 					Thread.sleep(sleepBetweenTimeouts * (numberOfTries - 1));

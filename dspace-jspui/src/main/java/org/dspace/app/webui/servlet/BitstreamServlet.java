@@ -8,7 +8,6 @@
 package org.dspace.app.webui.servlet;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -18,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.exceptions.COSVisitorException;
@@ -257,16 +257,20 @@ public class BitstreamServlet extends DSpaceServlet
                 && coverService.canCreateCover(bitstream) )
         {
             // Pipe the bits
-
+            File scratchFile = null;
             try
             {
                 CitationDocument citationDocument = new CitationDocument(
                         configFile);
-                File citedDoc = citationDocument.makeCitedDocument(context,
+                is = citationDocument.makeCitedDocument(context,
                         bitstream, configFile);
-                is = new FileInputStream(citedDoc);
+
+                // copy inputstream to temp file to retrieve length
+                scratchFile = File.createTempFile(String.valueOf(bitstream.getID()), "temp");
+                FileUtils.copyInputStreamToFile(is, scratchFile);
                 response.setHeader("Content-Length",
-                        String.valueOf(citedDoc.length()));
+                        String.valueOf(Long.valueOf(scratchFile.length())));
+                scratchFile.delete();
             }
             catch (AuthorizeException e)
             {
@@ -276,6 +280,12 @@ public class BitstreamServlet extends DSpaceServlet
             catch (Exception e)
             {
                 log.error(e.getMessage(), e);
+            }
+            finally
+            {
+                if(scratchFile != null && scratchFile.exists()) {
+                    scratchFile.delete();
+                }
             }
 
         }

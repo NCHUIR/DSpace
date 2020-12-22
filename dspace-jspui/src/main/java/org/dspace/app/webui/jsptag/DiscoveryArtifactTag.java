@@ -105,6 +105,11 @@ public class DiscoveryArtifactTag extends BodyTagSupport {
 				if (artifact.getType() == 2) {
 					Bundle[] bundles = ((Item) artifact).getBundles("BRANDED_PREVIEW");
 
+					// fallback to basic thumbnail bundle if branded_preview not available
+					if (bundles.length == 0) {
+						bundles = ((Item) artifact).getBundles("THUMBNAIL");
+					}
+
 					if (bundles.length > 0) {
 						Bitstream[] bitstreams = bundles[0].getBitstreams();
 
