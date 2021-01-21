@@ -51,9 +51,13 @@ public class ItemWithBitstreamVsTotalCounter implements Runnable
     }
 
     public static ItemWithBitstreamVsTotalCounter getCommunityCount(int community_id) {
-        ItemWithBitstreamVsTotalCounter r = communityCount.get(community_id);
-        if(r == null) return new ItemWithBitstreamVsTotalCounter();
-        else return r;
+        try {
+            ItemWithBitstreamVsTotalCounter r = communityCount.get(community_id);
+            if(r == null) return new ItemWithBitstreamVsTotalCounter();
+            else return r;
+        } catch (NullPointerException e) {
+            return new ItemWithBitstreamVsTotalCounter();
+        }
     }
 
     public static ItemWithBitstreamVsTotalCounter getCollectionCount(Collection collection) {
