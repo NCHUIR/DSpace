@@ -24,6 +24,54 @@
 <%@ page import="org.dspace.app.webui.util.UIUtil" %>
 <%@ page import="org.dspace.app.webui.util.LocaleUIHelper" %>
 <%@ page import="org.dspace.statistics.ItemWithBitstreamVsTotalCounter" %>
+<%@ page import="org.dspace.utils.DSpace" %>
+<%@ page import="org.dspace.services.CachingService" %>
+<%@ page import="org.dspace.services.model.CacheConfig" %>
+<%@ page import="org.dspace.services.model.Cache" %>
+<%@ page import="java.util.Calendar" %>
+<%@ page import="org.apache.http.client.HttpClient" %>
+<%@ page import="org.apache.http.impl.client.DefaultHttpClient" %>
+<%@ page import="org.dspace.google.GoogleAccount" %>
+<%@ page import="com.google.api.services.analytics.Analytics" %>
+<%@ page import="com.google.api.services.analytics.model.GaData" %>
+<%@ page import="com.google.api.services.analytics.model.RealtimeData" %>
+<%@ page import="org.apache.log4j.Logger" %>
+
+<%
+	int onlineUsers = -1;
+	DSpace dspace = new DSpace();
+
+	CachingService cacheService = dspace.getSingletonService(CachingService.class);
+
+	Cache cache = cacheService.getCache("onlineUser", new CacheConfig(CacheConfig.CacheScope.INSTANCE));
+	if (cache.exists("expiredTime")) {
+		try {
+			Calendar expiredTime = (Calendar) cache.get("expiredTime");
+			if (expiredTime.after(Calendar.getInstance()) && cache.exists("count")) {
+				onlineUsers = (Integer) cache.get("count");
+			}
+		} catch (Exception e) {
+			Logger log = Logger.getLogger(GoogleAccount.class);
+			log.error("expiredTime", e);
+		}
+	}
+	if (onlineUsers == -1) {
+		try {
+			GoogleAccount account = GoogleAccount.getInstance();
+			RealtimeData data = GoogleAccount.getInstance().getClient().data().realtime().get(account.getTableId(), "rt:activeUsers").execute();
+			onlineUsers = Integer.parseInt(data.getTotalsForAllResults().get("rt:activeUsers"));
+			cache.put("count", onlineUsers);
+		} catch (Exception e) {
+			Logger log = Logger.getLogger(GoogleAccount.class);
+			log.error("ga", e);
+			cache.put("count", -1);
+		}
+
+		Calendar expiredTime = Calendar.getInstance();
+		expiredTime.add(Calendar.MINUTE, 1);
+		cache.put("expiredTime", expiredTime);
+	}
+%>
 
 <%
 	String footerNews = NewsManager.readNewsFile(LocaleSupport.getLocalizedMessage(pageContext, "news-footer.html"));
@@ -64,6 +112,14 @@
 					}
 				</style>
              <div class="container">
+				 <div class="row">
+					 <div class="col-md-6">
+						 <p class="text-muted">
+						 <fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix" /><%= siteCount.toString() %>
+					 	</p>
+					 </div>
+					 <div class="col-md-6"><p class="text-muted">即時線上人數：<%= onlineUsers %></p></div>
+				 </div>
 	             <div class="row">
 					 <div class="col-md-3 col-sm-3 footer-link-list">
 						 <a style="font-size: large" href="/community-list">各單位分類列表</a><br>
@@ -94,9 +150,6 @@
 					 </div>
 	             	<div class="col-md-3 col-sm-3 footer-link-list">
 						<a href="<%=request.getContextPath()%>/copyright.jsp">著作權相關文件</a><br>
-						<p class="text-muted">
-                    		<fmt:message key="jsp.ItemWithBitstreamVsTotalCounter.prefix" /><%= siteCount.toString() %>
-                		</p>
 						<br>
 	             	</div>
 	            </div>
